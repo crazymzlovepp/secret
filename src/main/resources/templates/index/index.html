@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Bootstrap 实例 - 导航栏中的表单</title>
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    html,body{
+        height: 100%;
+    }
+
+    #header_id{
+        width: 100%;
+        height: 100px;
+    }
+    #body_id{
+        /*保证footer是相对于container位置绝对定位*/
+        position:relative;
+        width:100%;
+        min-height:100%;
+        /*设置padding-bottom值大于等于footer的height值，以保证main的内容能够全部显示出来而不被footer遮盖；*/
+        padding-bottom: 50px;
+        box-sizing: border-box;
+    }
+    #content_id{
+        width: 100%;
+        height: 100%;
+    }
+    #footer_id{
+        width: 100%;
+        height:50px;   /* footer的高度一定要是固定值*/
+        position:absolute;
+        bottom:0px;
+        left:0px;
+        background: #333;
+    }
+    #main_left_id{ position:absolute; margin-top:50px; left:0; width:6%;}
+    #main_id{ margin-left:7%;}
+</style>
+<body>
+<div id="body_id">
+<!--header-->
+    <div id="header_id">
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">secret</a>
+        </div>
+        <div>
+            <ul class="nav nav-pills navbar-nav navbar-left">
+                <li class="active"><a href="#">24小时最热</a></li>
+                <li><a href="#">7天最热</a></li>
+                <li><a href="#">近一个月最热</a></li>
+                <li><a href="#">近三个月最热</a></li>
+                <li><a href="#">本年最热</a></li>
+            </ul>
+        </div>
+        <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">查询</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+        </ul>
+    </div>
+</nav>
+    </div>
+<!--内容区域-->
+<div  id="content_id">
+    <!--左侧部分-->
+    <div id="main_left_id">
+    <nav>
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active"><a href="#">测试</a></li>
+                <li><a href="#">测试</a></li>
+                <li><a href="#">测试</a></li>
+                <li><a href="#">测试</a></li>
+                <li><a href="#">测试</a></li>
+                <li><a href="#">测试</a></li>
+            </ul>
+    </nav>
+    </div>
+    <!--主内容区域-->
+    <div id="main_id" class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">面板标题</h3>
+        </div>
+        <div class="panel-body" style="height:200px;">
+            这是一个基本的面板
+        </div>
+        <div class="panel-heading">
+            <h3 class="panel-title">面板标题</h3>
+        </div>
+        <div class="panel-body" style="height:200px;">
+            这是一个基本的面板
+        </div>
+        <div class="panel-heading">
+            <h3 class="panel-title">面板标题</h3>
+        </div>
+        <div class="panel-body" style="height:200px;">
+            这是一个基本的面板
+        </div>
+        <div class="panel-heading">
+            <h3 class="panel-title">面板标题</h3>
+        </div>
+        <div class="panel-body" style="height:200px;">
+            这是一个基本的面板
+        </div>
+        <div class="panel-heading">
+            <h3 class="panel-title">面板标题</h3>
+        </div>
+        <div class="panel-body" style="height:200px;">
+            这是一个基本的面板
+        </div>
+        <div class="panel-heading">
+            <h3 class="panel-title">面板标题</h3>
+        </div>
+        <div class="panel-body" style="height:200px;">
+            这是一个基本的面板
+        </div>
+    </div>
+</div>
+    <!--footer-->
+    <div id="footer_id">
+<footer>
+<p>这是底部！</p>
+</footer>
+    </div>
+</div>
+</body>
+</html>
