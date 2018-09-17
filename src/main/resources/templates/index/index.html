@@ -65,7 +65,7 @@
         right: 0px;
         top:100px;
         width:35%;
-        height: 70%;
+        height:70%;
         background:#B4CDCD;
     }
 </style>
@@ -94,8 +94,8 @@
             <a href="#" class="button button-primary button-pill button-tiny">Go</a>
         </form>
         <ul class="nav navbar-nav navbar-right">
-            <li id="login_id" onclick="searchData('login_id')"><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
-            <li id="register_id" onclick="searchData('register_id')"><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+            <li id="register_id" onclick="loginOrRegister('register_id')"><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+            <li id="login_id" onclick="loginOrRegister('login_id')"><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
         </ul>
     </div>
 </nav>
@@ -179,8 +179,8 @@
             <p>世情薄，人情恶，雨送黄昏花易落。晓风干，泪痕残，欲笺心事，独语斜栏。难、难、难。</p>
             <p>人成各，今非昨，病浑常似秋千索。角声寒，夜阑珊，怕人寻问，咽泪装欢。瞒、瞒、瞒。</p>
         </div>
-        <div style="margin-left:25%;margin-top:30%;">
-        <a href="#" class="button button-3d button-primary button-pill button-small">发布新内容</a>
+        <div style="margin-left:25%;margin-top:35%;">
+        <a href="#" class="button button-3d button-primary button-pill button-small">发布新内容</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onclick="goTop()" class="button button-3d button-primary button-pill button-small">返回顶部</a>
         </div>
     </div>
@@ -204,7 +204,11 @@
         //将当前数据类型增加class样式
         $("#"+id).addClass("active");
         //隐藏当前id
-        $("#active_id").val(id)
+        $("#active_id").val(id);
+    }
+    //登录或者注册
+    function loginOrRegister(id){
+        window.open("/index/loginOrRegister.html?id="+id);
     }
     //返回顶部
     function goTop(){

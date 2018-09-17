@@ -1,6 +1,7 @@
 package com.secret.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,4 +33,25 @@ public class IndexController {
 		}
 		return model;
 	}
+    /**
+     * @author      mym
+     * @date        2018/9/17 0017 16:18
+     * @describe    登录或者注册
+     * @version     V1.0
+     * @param       [model, userName]
+     * @return      org.springframework.web.servlet.ModelAndView
+    */
+    @RequestMapping("/loginOrRegister")
+    public ModelAndView loginOrRegister(ModelAndView model, String id){
+        try {
+            if(!StringUtils.isEmpty(id) && id.equals("login_id")){
+                model.setViewName("index/login");
+            }else if(!StringUtils.isEmpty(id) && id.equals("register_id")){
+                model.setViewName("index/register");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return model;
+    }
 }
