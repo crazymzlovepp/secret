@@ -1,18 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>SECRET</title>
-    <!-- Bootstrap -->
-    <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <!--buttons-->
-    <link href="/css/buttons.css" rel="stylesheet">
-    <!-- jQuery -->
-    <script src="/js/jquery.min.js" type="text/javascript"></script>
-    <!-- Bootstrap -->
-    <script src="/js/bootstrap.min.js" type="text/javascript"></script>
-</head>
+<#assign ctx=request.getContextPath()>
+<#include "../homePage-header.html"/>
 <style>
     *{
         margin: 0;
@@ -63,10 +50,18 @@
         margin-left:3%;
         position: fixed ! important;
         right: 0px;
-        top:100px;
+        top:120px;
         width:35%;
         height:70%;
         background:#B4CDCD;
+    }
+    #noLoginWarning_id{
+        margin-left:3%;
+        position: fixed ! important;
+        right: 0px;
+        top:50px;
+        width:35%;
+        display: none;
     }
 </style>
 <body>
@@ -95,7 +90,11 @@
         </form>
         <ul class="nav navbar-nav navbar-right">
             <li id="register_id" onclick="loginOrRegister('register_id')"><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+            <#if loginType?exists><!--已经登录-->
+            <li id="layout_id" onclick="loginOrRegister('layout_id')"><a href="#"><span class="glyphicon glyphicon-log-in"></span> 退出</a></li>
+            <#else><!--未登录-->
             <li id="login_id" onclick="loginOrRegister('login_id')"><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+            </#if>
         </ul>
     </div>
 </nav>
@@ -180,17 +179,26 @@
             <p>人成各，今非昨，病浑常似秋千索。角声寒，夜阑珊，怕人寻问，咽泪装欢。瞒、瞒、瞒。</p>
         </div>
         <div style="margin-left:25%;margin-top:35%;">
-        <a href="#" class="button button-3d button-primary button-pill button-small">发布新内容</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" onclick="releaseArticle()" class="button button-3d button-primary button-pill button-small">发布新内容</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onclick="goTop()" class="button button-3d button-primary button-pill button-small">返回顶部</a>
         </div>
+    </div>
+    <!--未登录不允许操作警告提示-->
+    <div id="noLoginWarning_id" class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" style="width: 20px;"
+                aria-hidden="true">
+            &times;
+        </button>
+        请登录后再进行操作！
     </div>
 </div>
 <!--footer-->
 <footer id="footer_id">
 <p style="margin-top:20px;text-align: center;">Copyright 2018 - 2019 Secret. All Rights Reserved</p>
 </footer>
-
     <!--隐藏域-->
+    <!--隐藏登录状态  查看我的及发布文章时有用-->
+    <input type="hidden" id="loginType_hidden" value="${loginType!''}">
     <!--隐藏当前查询数据的类型(id)-->
     <input type="hidden" id="active_id" value="24_hours_id">
 </div>
@@ -205,14 +213,24 @@
         $("#"+id).addClass("active");
         //隐藏当前id
         $("#active_id").val(id);
+        //未登录不允许查看
+        if(id !=null && id =="myself_id"){
+            releaseArticle();
+        }
     }
     //登录或者注册
     function loginOrRegister(id){
-        window.open("/index/loginOrRegister.html?id="+id);
+        window.location.href = "/index/loginOrRegister.html?id="+id;
     }
     //返回顶部
     function goTop(){
         $("html,body").animate({scrollTop:0},500);
+    }
+    //发布秘密
+    function releaseArticle(){
+        if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
+            $("#noLoginWarning_id").show();
+        }
     }
 </script>
 </html>
