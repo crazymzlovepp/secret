@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.secret.mapper.ArticleVoMapper" >
+  <resultMap id="BaseResultMap" type="com.secret.pojo.ArticleVo" >
+    <id column="article_id" property="articleId" jdbcType="VARCHAR" />
+    <id column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="article_username" property="articleUsername" jdbcType="VARCHAR" />
+    <result column="article_title" property="articleTitle" jdbcType="VARCHAR" />
+    <result column="article_type" property="articleType" jdbcType="VARCHAR" />
+    <result column="browse" property="browse" jdbcType="DECIMAL" />
+    <result column="report_tag" property="reportTag" jdbcType="VARCHAR" />
+    <result column="report_num" property="reportNum" jdbcType="INTEGER" />
+    <result column="delete_tag" property="deleteTag" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="create_ip" property="createIp" jdbcType="VARCHAR" />
+    <result column="update_ip" property="updateIp" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from article
+    where article_id = #{articleId,jdbcType=VARCHAR}
+      and user_id = #{userId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.secret.pojo.ArticleVo" >
+    insert into article (article_id, user_id, article_username, 
+      article_title, article_type, browse, 
+      report_tag, report_num, delete_tag, 
+      create_date, update_date, create_ip, 
+      update_ip, content)
+    values (#{articleId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{articleUsername,jdbcType=VARCHAR}, 
+      #{articleTitle,jdbcType=VARCHAR}, #{articleType,jdbcType=VARCHAR}, #{browse,jdbcType=DECIMAL}, 
+      #{reportTag,jdbcType=VARCHAR}, #{reportNum,jdbcType=INTEGER}, #{deleteTag,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{createIp,jdbcType=VARCHAR}, 
+      #{updateIp,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.secret.pojo.ArticleVo" >
+    update article
+    set article_username = #{articleUsername,jdbcType=VARCHAR},
+      article_title = #{articleTitle,jdbcType=VARCHAR},
+      article_type = #{articleType,jdbcType=VARCHAR},
+      browse = #{browse,jdbcType=DECIMAL},
+      report_tag = #{reportTag,jdbcType=VARCHAR},
+      report_num = #{reportNum,jdbcType=INTEGER},
+      delete_tag = #{deleteTag,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      create_ip = #{createIp,jdbcType=VARCHAR},
+      update_ip = #{updateIp,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where article_id = #{articleId,jdbcType=VARCHAR}
+      and user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select article_id, user_id, article_username, article_title, article_type, browse, 
+    report_tag, report_num, delete_tag, create_date, update_date, create_ip, update_ip, 
+    content
+    from article
+    where article_id = #{articleId,jdbcType=VARCHAR}
+      and user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select article_id, user_id, article_username, article_title, article_type, browse, 
+    report_tag, report_num, delete_tag, create_date, update_date, create_ip, update_ip, 
+    content
+    from article
+  </select>
+</mapper>

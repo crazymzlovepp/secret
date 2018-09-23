@@ -1,5 +1,9 @@
 package com.secret.controller;
 
+import com.secret.common.utils.IpInfoUtils;
+import com.secret.pojo.UserVo;
+import com.secret.service.IndexService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @RequestMapping("/index")
 public class IndexController {
+    @Autowired
+    IndexService indexService;
 	/**
 	 * 
 	 * @author 		mym
@@ -80,18 +86,68 @@ public class IndexController {
         try {
             String userName = request.getParameter("userName");
             String password = request.getParameter("password");
-            //伪代码
-            if(!StringUtils.isEmpty(userName) && userName.equals("admin")
-            &&!StringUtils.isEmpty(password) && password.equals("admin")){
-                request.getSession().setAttribute("userName",userName);
-                response.sendRedirect(request.getContextPath()+"/index/index.html");
-                model.setViewName("index/index");
+            if(!StringUtils.isEmpty(userName) &&!StringUtils.isEmpty(password)){
+                UserVo userVo = indexService.selectUserByuserNameAndPassword(userName,password);
+                if(userVo != null){
+                    request.getSession().setAttribute("userName",userName);
+                    response.sendRedirect(request.getContextPath()+"/index/index.html");
+                    model.setViewName("index/index");
+                }else{
+                    model.addObject("errorInfo","用户名或密码错误！");
+                    model.setViewName("index/login");
+                }
             }else{
-                model.addObject("errorInfo","用户名或密码错误！");
+                model.addObject("errorInfo","用户名或密码不能为空！");
                 model.setViewName("index/login");
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return model;
+    }
+    /* *
+    * @author :     mym
+    * @date Date :  2018/9/23 17:53
+    * @version :    V1.0
+    * @describe :   注册
+    * @param :      
+    * @return :     
+    */
+    @RequestMapping("/register")
+    public ModelAndView register(ModelAndView model, UserVo userVo,HttpServletRequest request, HttpServletResponse response){
+        try {
+            if(!StringUtils.isEmpty(userVo.getUserName()) && !StringUtils.isEmpty(userVo.getPassword())
+                    &&!StringUtils.isEmpty(userVo.getBirthPlace()) && !StringUtils.isEmpty(userVo.getHobby())){
+                UserVo checkUserVo  = indexService.selectUserByUserName(userVo.getUserName());
+                if(checkUserVo != null){
+                    model.addObject("errorInfo","用户名已存在，请重新输入！");
+                    model.setViewName("index/register");
+                }else{
+                    userVo.setRegisterIp(IpInfoUtils.getVisitIp(request));
+                    String[] ipAddressArr = IpInfoUtils.getIpAddress(IpInfoUtils.getVisitIp(request)).split("/");
+                    for (int i=0;i<ipAddressArr.length;i++) {
+                        if(i == 0){
+                            userVo.setRegisterCountry(!StringUtils.isEmpty(ipAddressArr[0])?ipAddressArr[0]:"");
+                        }else if(i ==1){
+                            userVo.setRegisterProvince(!StringUtils.isEmpty(ipAddressArr[1])?ipAddressArr[0]:"");
+                        }else{
+                            userVo.setRegisterCity(!StringUtils.isEmpty(ipAddressArr[2])?ipAddressArr[0]:"");
+                        }
+                    }
+                    indexService.insertUserVo(userVo);
+                    request.getSession().setAttribute("userName",userVo.getUserName());
+                    response.sendRedirect(request.getContextPath()+"/index/index.html");
+                    model.setViewName("index/index");
+                }
+            }else{
+                model.addObject("errorInfo","必填项有空！");
+                model.setViewName("index/register");
+            }
+
+        } catch (Exception e) {
+            model.addObject("errorInfo","新增用户失败，请稍后再试！");
+            model.setViewName("index/register");
             e.printStackTrace();
         }
         return model;

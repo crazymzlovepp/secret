@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.secret.mapper.CommentVoMapper" >
+  <resultMap id="BaseResultMap" type="com.secret.pojo.CommentVo" >
+    <id column="article_id" property="articleId" jdbcType="VARCHAR" />
+    <result column="comment_id" property="commentId" jdbcType="VARCHAR" />
+    <result column="comment_name" property="commentName" jdbcType="VARCHAR" />
+    <result column="parent_comment_id" property="parentCommentId" jdbcType="VARCHAR" />
+    <result column="parent_comment_name" property="parentCommentName" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="comment_date" property="commentDate" jdbcType="TIMESTAMP" />
+    <result column="comment_ip" property="commentIp" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from comment
+    where article_id = #{articleId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.secret.pojo.CommentVo" >
+    insert into comment (article_id, comment_id, comment_name, 
+      parent_comment_id, parent_comment_name, content, 
+      comment_date, comment_ip)
+    values (#{articleId,jdbcType=VARCHAR}, #{commentId,jdbcType=VARCHAR}, #{commentName,jdbcType=VARCHAR}, 
+      #{parentCommentId,jdbcType=VARCHAR}, #{parentCommentName,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{commentDate,jdbcType=TIMESTAMP}, #{commentIp,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.secret.pojo.CommentVo" >
+    update comment
+    set comment_id = #{commentId,jdbcType=VARCHAR},
+      comment_name = #{commentName,jdbcType=VARCHAR},
+      parent_comment_id = #{parentCommentId,jdbcType=VARCHAR},
+      parent_comment_name = #{parentCommentName,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      comment_date = #{commentDate,jdbcType=TIMESTAMP},
+      comment_ip = #{commentIp,jdbcType=VARCHAR}
+    where article_id = #{articleId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select article_id, comment_id, comment_name, parent_comment_id, parent_comment_name, 
+    content, comment_date, comment_ip
+    from comment
+    where article_id = #{articleId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select article_id, comment_id, comment_name, parent_comment_id, parent_comment_name, 
+    content, comment_date, comment_ip
+    from comment
+  </select>
+</mapper>

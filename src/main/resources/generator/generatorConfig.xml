@@ -21,7 +21,7 @@
 		</commentGenerator>
 		<!--数据库链接URL，用户名、密码 -->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://127.0.0.1:3306/see_movie" userId="root"
+			connectionURL="jdbc:mysql://127.0.0.1:3306/secret" userId="root"
 			password="root">
 		</jdbcConnection>
 		<javaTypeResolver>
@@ -44,9 +44,17 @@
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
 		<!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名 -->
-		<table tableName="visit_user_info" domainObjectName="VisitUserInfoVo"
+		<table tableName="user" domainObjectName="UserVo"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>
+		<table tableName="comment" domainObjectName="CommentVo"
+			   enableCountByExample="false" enableUpdateByExample="false"
+			   enableDeleteByExample="false" enableSelectByExample="false"
+			   selectByExampleQueryId="false"></table>
+		<table tableName="article" domainObjectName="ArticleVo"
+			   enableCountByExample="false" enableUpdateByExample="false"
+			   enableDeleteByExample="false" enableSelectByExample="false"
+			   selectByExampleQueryId="false"></table>
 	</context>
 </generatorConfiguration>
