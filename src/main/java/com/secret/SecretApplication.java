@@ -20,7 +20,7 @@ public class SecretApplication extends WebMvcConfigurerAdapter{
 	//这是为打war部署做准备 包括extends的SpringBootServletInitializer都是为打war包部署时使用
 	/*@Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(SeeMovieApplication.class);
+        return application.sources(SecretApplication.class);
     }*/
 	//favorPathExtension表示支持是否后缀匹配
 	@Override

@@ -35,14 +35,7 @@
         left:0px;
         background:#e3c887;
     }
-    /*#main_left_id{
-        position:absolute;
-        margin-top:50px;
-        left:0;
-        width:15%;
-        height: 200px;
-        background:#B4CDCD;
-        }*/
+
     #main_id{
         margin-left: 2%;
         width:60%;
@@ -56,14 +49,6 @@
         height:70%;
         background:#B4CDCD;
     }
-    #noLoginWarning_id{
-        margin-left:3%;
-        position: fixed ! important;
-        right: 0px;
-        top:50px;
-        width:35%;
-        display: none;
-    }
 </style>
 <body>
 <div id="body_id">
@@ -75,20 +60,9 @@
         </div>
         <div>
             <ul class="nav nav-pills navbar-nav navbar-left">
-                <li class="active" id="24_hours_id" onclick="searchData('24_hours_id')"><a href="#">24小时最热</a></li>
-                <li id="7_days_id" onclick="searchData('7_days_id')"><a href="#">7天最热</a></li>
-                <li id="the_month_id" onclick="searchData('the_month_id')"><a href="#">近一个月最热</a></li>
-                <li id="three_month_id" onclick="searchData('three_month_id')"><a href="#">近三个月最热</a></li>
-                <li id="the_year_id" onclick="searchData('the_year_id')"><a href="#">本年最热</a></li>
-                <li id="myself_id" onclick="searchData('myself_id')"><a href="#">我的</a></li>
+                <li class="active" id="goToHeader_id" onclick="searchData('goToHeader_id')"><a href="#">返回首页</a></li>
             </ul>
         </div>
-        <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
-            </div>
-            <a href="#" class="button button-primary button-pill button-tiny">Go</a>
-        </form>
         <ul class="nav navbar-nav navbar-right">
             <li id="register_id" onclick="loginOrRegister('register_id')"><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
             <#if loginType?exists><!--已经登录-->
@@ -110,9 +84,14 @@
     </div>-->
     <!--主内容区域-->
     <div id="main_id">
-        <div>
-            <p>红稣手，黄藤酒，满城春色宫墙柳。东风恶，欢情薄。一杯愁绪，几年离索。错、错、错。春如旧，人空瘦，泪痕红浥鲛绡透。桃花落，闲池阁，山盟虽在，锦书难托。莫、莫、莫。世情薄，人情恶，雨送黄昏花易落。晓风干，泪痕残，欲笺心事，独语斜栏。难、难、难。人成各，今非昨，病浑常似秋千索。角声寒，夜阑珊，怕人寻问，咽泪装欢。瞒、瞒、瞒。</p>
-        </div>
+        <form id="addReleaseArticle_form" method="post" action="/index/addReleaseArticle.html" autocomplete="off">
+        文章名称<input type="text" name="articleTitle">
+            类型<select name="articleType">
+                <option value="1">公开</option>
+                <option value="2">私密</option>
+                </select>
+            内容<textarea name="content" style="margin: 0px; width: 767px; height: 468px;"></textarea>
+        </form>
     </div>
     <!--右侧部分-->
     <div id="main_right_id">
@@ -123,17 +102,9 @@
             <p>人成各，今非昨，病浑常似秋千索。角声寒，夜阑珊，怕人寻问，咽泪装欢。瞒、瞒、瞒。</p>
         </div>
         <div style="margin-left:25%;margin-top:35%;">
-        <a href="#" onclick="releaseArticle()" class="button button-3d button-primary button-pill button-small">发布新内容</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="#" onclick="goTop()" class="button button-3d button-primary button-pill button-small">返回顶部</a>
+            <a href="#" onclick="addReleaseArticle()" class="button button-3d button-primary button-pill button-small">保存秘密</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="#" onclick="goTop()" class="button button-3d button-primary button-pill button-small">返回顶部</a>
         </div>
-    </div>
-    <!--未登录不允许操作警告提示-->
-    <div id="noLoginWarning_id" class="alert alert-danger alert-dismissable" style="background: #FF69B4;">
-        <button type="button" class="close" onclick="hidenWarning()" style="width: 20px;"
-                aria-hidden="true">
-            &times;
-        </button>
-        请登录后再进行操作！
     </div>
 </div>
 <!--footer-->
@@ -144,7 +115,7 @@
     <!--隐藏登录状态  查看我的及发布文章时有用-->
     <input type="hidden" id="loginType_hidden" value="${loginType!''}">
     <!--隐藏当前查询数据的类型(id)-->
-    <input type="hidden" id="active_id" value="24_hours_id">
+    <input type="hidden" id="active_id" value="goToHeader_id">
 </div>
 </body>
 <script>
@@ -163,6 +134,8 @@
             if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
                 $("#noLoginWarning_id").show();
             }
+        }else if(id !=null && id =="goToHeader_id"){
+            window.location.href = "/index/index.html";
         }
     }
     //登录或者注册或者退出
@@ -173,18 +146,9 @@
     function goTop(){
         $("html,body").animate({scrollTop:0},500);
     }
-    //关闭警告提示
-    function hidenWarning(){
-        $("#noLoginWarning_id").hide();
-    }
-    //发布秘密
-    function releaseArticle(){
-        //校验是否登陆
-        if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
-            $("#noLoginWarning_id").show();
-        }else{
-            window.location.href = "/index/toReleaseArticlePage.html";
-        }
+    //保存秘密
+    function addReleaseArticle(){
+        $("#addReleaseArticle_form").submit();
     }
 </script>
 </html>

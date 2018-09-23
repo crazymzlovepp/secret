@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author      mym
  * @version     V1.0
- * @project     SeeMovie
+ * @project     secret
  * @date        2018-08-28 20:35
  * @describe    封装返回信息的实体类
  */
