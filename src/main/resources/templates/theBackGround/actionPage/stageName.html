@@ -7,7 +7,7 @@
 									艺名<input type="text" id="stageName_id"
 											   placeholder="请输入:艺名">
 									<a class="btn btn-success-alt btn-sm"
-									   style="margin-right:500px;float:right;" onclick="searchData('/stageName/selectStageNameListByParam.html')" data-type="btn-search"> <i
+									   style="margin-right:500px;float:right;" onclick="searchData()" data-type="btn-search"> <i
 											class="fa fa-search"></i>
 									</a>
 								</div>
@@ -19,7 +19,7 @@
 									<button type="button" class="button button-pill button-small button-primary" onclick="beforeEdit()">编辑</button>
 									<button type="button" class="button button-pill button-small button-primary" onclick="deleteData()">删除</button>
 								</div>
-							<table id="menuTable">
+							<table id="stageNameTable">
 							</table>
 						</div>
 				</div><!-- /.row -->
@@ -37,8 +37,8 @@
 				</h4>
 			</div>
 			<div class="modal-body">
-				<form id="addMenu_form_id" autocomplete="off">
-					<textarea name="stageName">
+				<form id="addStageName_form_id" autocomplete="off">
+					<textarea name="stageName" id="stageName_add">
 
 					</textarea>
 				</form>
@@ -55,39 +55,33 @@
 	</div><!-- /.modal -->
 
 						<!--编辑数据的form-->
-						<form action="" class="form-horizontal row-border" style="display: none" id="edit_form" autocomplete="off">
+						<form action="" class="form-horizontal row-border" style="display: none" id="StageName_form_edit_id" autocomplete="off">
 							<!--隐藏菜单id-->
-							<input type="hidden" id="menuId_edit" name="menuId">
+							<input type="hidden" id="stageName_edit_id" name="stageNameId">
 							<div class="form-group  col-xs-12">
-								<label class="col-xs-2 control-label Require">菜单名称</label>
-								<div class="col-xs-3">
-									<input type="text" name="menuName" id="menuName_edit" class="form-control"/>
-								</div>
-								<label class="col-xs-2 control-label Require">菜单链接</label>
+								<label class="col-xs-2 control-label Require">艺名</label>
 								<div class="col-xs-5">
-									<input type="text" name="menuHref" id="menuHref_edit" class="form-control"/>
+									<input type="text" name="stageName" id="stageName_edit" class="form-control"/>
 								</div>
 							</div>
 						</form>
 <#include "../../theBackGround-footer.html"/>
 <script type="text/javascript">
-	var url = "/stageName/selectStageNameListByParam.html";
     $(function(){
         //加载菜单表格
-        searchData(url);
+        searchData();
     });
     //查询数据
 	function searchData(url){
-        $("#menuTable").bootstrapTable('destroy').bootstrapTable({
-            url: url,
+        $("#stageNameTable").bootstrapTable('destroy').bootstrapTable({
+            url: "/stageName/selectStageNameListByParam.html",
             pagination: true,
             pageSize: 20,
             pageList: [20,50,100],
             sidePagination: "server",
             queryParams: function (params) {
                 return {
-                    menuParentId:$("#menuParentId_id").val(),//父级菜单id
-                    menuName:$("#menuName_id").val(),
+                    stageName:$("#stageName_id").val(),
                 	pageSize: params.limit,
                     pageNumber: params.offset,
                     sortOrder: params.order,
@@ -113,25 +107,13 @@
                     return index + 1;
                 }
             },{
-                field: 'menuParentId',
-                title: '是否顶级菜单',
-                align: "center",
-                width:'15%',
-                formatter: function (value, row, index) {
-                    if(value != null && value == "0"){
-                        return "是"
-                    }else{
-                        return "否";
-                    }
-                }
-            },{
-                field: 'menuName',
-                title: '菜单名称',
+                field: 'stageName',
+                title: '艺名',
                 align: "center",
                 width:'15%'
             },{
-                field: 'menuHref',
-                title: '菜单链接',
+                field: 'remarks',
+                title: '备注',
                 align: "center",
                 width:'15%'
             },{
@@ -146,32 +128,26 @@
                         return value;
                     }
                 }
+            },{
+                field: 'updateDate',
+                title: '创建日期',
+                align: "center",
+                width:'15%',
+                formatter: function (value, row, index) {
+                    if(value != null && value != "" && value != undefined && value != "undefined"){
+                        return wDateFormat(new Date(value), "yyyy-MM-dd HH:mm:ss")
+                    }else{
+                        return value;
+                    }
+                }
             }]
         });
 	}
-	//查找所有的父级菜单
-    function selectAllParentMenu() {
-        parentMenuOption = "";
-        $.ajax({
-            url:"/menu/selectAllParentMenu.html",
-            type:"POST",
-            dataType:"json",
-            success:function (data) {
-                if(data != null){
-                    for(var i=0;i<data.length;i++){
-                        parentMenuOption = parentMenuOption+"<option value=\""+data[i].menuId+"\">"+data[i].menuName+"</option>";
-                    }
-                }
-                $("#menuParentId_id").append(parentMenuOption);
-                $("#menuParentId_add").append(parentMenuOption);
-            }
-        });
-    }
 	//实际新增数据
     function addData(){
-        var vo = $('#addMenu_form_id').serializeJSON();
+        var vo = $('#addStageName_form_id').serializeJSON();
 	    $.ajax({
-                 	url:"/menu/addOrUpdateMenu.html",
+                 	url:"/stageName/addOrUpdateStageName.html",
                 	dataType:"json",
                 	method:"post",
 					data:{vo:vo},
@@ -179,30 +155,29 @@
 							if(data.status != null && data.status == true){
                                 $("#myModal").modal("hide");
                                 bootbox.alert({
-                                    message: "新增菜单成功！",
+                                    message: data.msg,
                                     size: 'small'
                                 });
-                                searchData("/menu/selectMenuListByParam.html");
+                                searchData();
 							}
 					}
 		});
     }
     //编辑数据前选中行
     function beforeEdit(){
-        var selectRow =  $('#menuTable').bootstrapTable('getSelections');
+        var selectRow =  $('#stageNameTable').bootstrapTable('getSelections');
         if(selectRow == null || selectRow == ''||selectRow.length>1){
             bootbox.alert({
                 message: "仅能选择一条要编辑的记录！",
                 size: 'small'
             });
         }else {
-            $("#menuName_edit").val(selectRow[0].menuName);
-            $("#menuHref_edit").val(selectRow[0].menuHref);
-            $("#menuId_edit").val(selectRow[0].menuId);
-            $("#edit_form").css("display","");
+            $("#stageName_edit_id").val(selectRow[0].stageNameId);
+            $("#stageName_edit").val(selectRow[0].stageName);
+            $("#StageName_form_edit_id").css("display","");
             bootbox.confirm({
                 title: "确定修改当前数据?",
-                message: $("#edit_form"),
+                message: $("#StageName_form_edit_id"),
                 buttons: {
                     confirm: {
                         label: 'Yes',
@@ -214,20 +189,20 @@
                     }
                 },
                 callback: function (result) {
-                    var vo = $('#edit_form').serializeJSON();
+                    var vo = $('#addStageName_form_edit_id').serializeJSON();
                     if(result == true){
                         $.ajax({
-                            url:"/menu/addOrUpdateMenu.html",
+                            url:"/stageName/addOrUpdateStageName.html",
                             dataType:"json",
                             method:"post",
                             data:{vo:vo},
                             success:function(data){
                                 if(data!= null && data.status == true){
                                     bootbox.alert({
-                                        message: "编辑数据成功！",
+                                        message: data.msg,
                                         size: 'small'
                                     });
-                                    searchData("/menu/selectMenuListByParam.html");
+                                    searchData();
                                 }else{
                                     bootbox.alert({
                                         message: "编辑数据失败！",
@@ -243,7 +218,7 @@
     }
     //删除
     function deleteData(){
-        var selectRow =  $('#menuTable').bootstrapTable('getSelections');
+        var selectRow =  $('#stageNameTable').bootstrapTable('getSelections');
         if(selectRow == null || selectRow == ''){
             bootbox.alert({
                 message: "请先选择要删除的数据！",
@@ -271,7 +246,7 @@
                     if(result == true){
                         $.ajax({
                             type: "POST",
-                            url: "/menu/deleteMenu.html",
+                            url: "/stageName/deleteStageName.html",
                             data: {ids:ids},
                             dataType: "json",
                             success:function(data){
@@ -280,7 +255,7 @@
                                         message: "删除数据成功！",
                                         size: 'small'
                                     });
-                                    searchData("/menu/selectMenuListByParam.html");
+                                    searchData();
                                 }else{
                                     bootbox.alert({
                                         message: "删除数据失败！",

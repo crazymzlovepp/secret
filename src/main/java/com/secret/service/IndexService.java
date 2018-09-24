@@ -1,6 +1,10 @@
 package com.secret.service;
 
+import com.secret.pojo.ArticleVo;
 import com.secret.pojo.UserVo;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @param :
@@ -17,4 +21,10 @@ public interface IndexService {
     void insertUserVo(UserVo userVo);
     //根据用户名及密码查询用户信息
     UserVo selectUserByuserNameAndPassword(String userName, String password);
+    //随机取一个艺名
+    String setlectStageName();
+    //新增秘密
+    void insertArticleVo(ArticleVo articleVo);
+    //多条件分页查询秘密
+    List<ArticleVo> selectArticleVoListByParam(Map<String, Object> paramMap);
 }

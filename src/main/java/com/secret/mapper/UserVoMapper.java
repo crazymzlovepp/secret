@@ -19,4 +19,6 @@ public interface UserVoMapper {
     UserVo selectUserByUserName(String userName);
     //根据用户名及密码查询用户信息
     UserVo selectUserByuserNameAndPassword(@Param("userName") String userName, @Param("password")String password);
+    //随机取一个艺名
+    String setlectStageNameRandom();
 }

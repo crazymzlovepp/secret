@@ -110,9 +110,15 @@
     </div>-->
     <!--主内容区域-->
     <div id="main_id">
-        <div>
-            <p>红稣手，黄藤酒，满城春色宫墙柳。东风恶，欢情薄。一杯愁绪，几年离索。错、错、错。春如旧，人空瘦，泪痕红浥鲛绡透。桃花落，闲池阁，山盟虽在，锦书难托。莫、莫、莫。世情薄，人情恶，雨送黄昏花易落。晓风干，泪痕残，欲笺心事，独语斜栏。难、难、难。人成各，今非昨，病浑常似秋千索。角声寒，夜阑珊，怕人寻问，咽泪装欢。瞒、瞒、瞒。</p>
-        </div>
+        <#if articleVoList?exists && (articleVoList?size>0)>
+            <#list articleVoList as articleVo>
+            <div>
+                <p>${articleVo.articleUsername!''}创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}
+                <p>${articleVo.articleTitle!'默认标题'}</p>
+                <textarea rows="20" cols="80">${articleVo.content!'暂无内容'}</textarea>
+            </div>
+            </#list>
+        </#if>
     </div>
     <!--右侧部分-->
     <div id="main_right_id">
@@ -163,6 +169,8 @@
             if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
                 $("#noLoginWarning_id").show();
             }
+        }else if(id !=null && id =="goToHeader_id"){
+            window.location.href = "/index/index.html";
         }
     }
     //登录或者注册或者退出

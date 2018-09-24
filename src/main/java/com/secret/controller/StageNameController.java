@@ -5,8 +5,9 @@ import com.alibaba.fastjson.JSON;
 import com.secret.common.utils.JsonData;
 import com.secret.pojo.MenuQueryVo;
 import com.secret.pojo.MenuVo;
+import com.secret.pojo.StageNameVo;
 import com.secret.service.LoginService;
-import com.secret.service.MenuService;
+import com.secret.service.StageNameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,7 @@ public class StageNameController {
 	@Autowired
 	LoginService loginService;
 	@Autowired
-	MenuService menuService;
+	StageNameService stageNameService;
 	/**
 	 * 
 	 * @author 		mym
@@ -62,15 +63,14 @@ public class StageNameController {
 	*/
 	@RequestMapping("/selectStageNameListByParam")
 	@ResponseBody
-	public Map<String,Object> selectStageNameListByParam(String menuParentId,String menuName,String pageSize,String pageNumber){
+	public Map<String,Object> selectStageNameListByParam(String stageName,String pageSize,String pageNumber){
 		Map<String,Object> returnMap = new HashMap<>();
 		try {
 			//封装查询参数
 			returnMap.put("currentPage", !StringUtils.isEmpty(pageNumber)?(Integer.valueOf(pageNumber)/Integer.valueOf(pageSize))+1:1);
 			returnMap.put("pageSize",!StringUtils.isEmpty(pageSize)?Integer.valueOf(pageSize):20);
-			returnMap.put("menuName",menuName);
-			returnMap.put("menuParentId",menuParentId);
-			returnMap = menuService.selectMenuListByParam(returnMap);
+			returnMap.put("stageName",stageName);
+			returnMap = stageNameService.selectStageNameListByParam(returnMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -90,19 +90,20 @@ public class StageNameController {
 		JsonData jsonData = new JsonData();
 		try {
 			if(!StringUtils.isEmpty(vo)){
-				MenuVo menuVo = JSON.parseObject(vo,MenuVo.class);
-				if(StringUtils.isEmpty(menuVo.getMenuId())){//新增
-					menuVo.setMenuId(UUID.randomUUID().toString().replaceAll("-",""));
-					menuVo.setMenuFlag("Y");
-					menuVo.setCreateDate(new Date());
-					menuService.insertMenuVo(menuVo);
-				}else{//编辑
-					menuVo.setUpdateDate(new Date());
-					menuService.updateMenuVo(menuVo);
+				StageNameVo stageNameVo = JSON.parseObject(vo,StageNameVo.class);
+				if(!StringUtils.isEmpty(stageNameVo.getStageName())){//艺名为空 不允许新增
+					if(StringUtils.isEmpty(stageNameVo.getStageNameId())){//新增
+						stageNameService.insertStageNameVo(stageNameVo);
+					}else{//编辑
+						stageNameService.updateStageNameVo(stageNameVo);
+					}
+					jsonData.setStatus(true);
+				}else{
+					jsonData.setMsg("艺名为空，不允许操作！");
 				}
-				jsonData.setStatus(true);
 			}
 		} catch (Exception e) {
+			jsonData.setMsg("操作异常，请重试！");
 			e.printStackTrace();
 		}
 		return jsonData;
@@ -120,7 +121,7 @@ public class StageNameController {
 	public JsonData deleteStageName(String ids){
 		JsonData jsonData= new JsonData();
 		try {
-			int returnType = menuService.deleteMenu(!StringUtils.isEmpty(ids)?ids.split(","):null);
+			int returnType = stageNameService.deleteStageName(!StringUtils.isEmpty(ids)?ids.split(","):null);
 			if(returnType == 0){
 				jsonData.setStatus(true);
 			}

@@ -1,16 +1,26 @@
 package com.secret.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.secret.common.utils.DateFormatterUtils;
 import com.secret.common.utils.IpInfoUtils;
+import com.secret.common.utils.JsonData;
+import com.secret.common.utils.UUIDUtils;
+import com.secret.pojo.ArticleVo;
 import com.secret.pojo.UserVo;
 import com.secret.service.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author      mym
@@ -35,13 +45,22 @@ public class IndexController {
 	 */
 	@RequestMapping("/index")
 	public ModelAndView goToIndex(ModelAndView model,HttpServletRequest request,String userName){
+	    Map<String,Object> paramMap = new HashMap<>();
 		try {
-            Object username = request.getSession().getAttribute("userName");
-            if(username==null){
+            Object userId = request.getSession().getAttribute("userId");
+            if(userId==null){
                 model.addObject("loginType",null);//访问首页没登录时将登录按钮显示否则隐藏
             }else{
                 model.addObject("loginType","logged");
             }
+            //初始化进入首页  默认查询24小时最热的秘密
+            String start = DateFormatterUtils.getYyyyMmDdStr(new Date());
+            paramMap.put("startDate",start+" 00:00:00");
+            paramMap.put("endDate",start+" 23:59:59");
+            paramMap.put("currentPage",1);
+            paramMap.put("pageSize",15);
+            List<ArticleVo> articleVoList = indexService.selectArticleVoListByParam(paramMap);
+            model.addObject("articleVoList",articleVoList);
 			model.setViewName("index/index");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +83,7 @@ public class IndexController {
             }else if(!StringUtils.isEmpty(id) && id.equals("register_id")){//注册
                 model.setViewName("index/register");
             }else if(!StringUtils.isEmpty(id) && id.equals("layout_id")){//退出登录
-                request.getSession().removeAttribute("userName");
+                request.getSession().removeAttribute("userId");
                 response.sendRedirect(request.getContextPath()+"/index/index.html");
                 model.setViewName("index/index");
             }
@@ -89,7 +108,7 @@ public class IndexController {
             if(!StringUtils.isEmpty(userName) &&!StringUtils.isEmpty(password)){
                 UserVo userVo = indexService.selectUserByuserNameAndPassword(userName,password);
                 if(userVo != null){
-                    request.getSession().setAttribute("userName",userName);
+                    request.getSession().setAttribute("userId",userVo.getUserId());
                     response.sendRedirect(request.getContextPath()+"/index/index.html");
                     model.setViewName("index/index");
                 }else{
@@ -136,7 +155,7 @@ public class IndexController {
                         }
                     }
                     indexService.insertUserVo(userVo);
-                    request.getSession().setAttribute("userName",userVo.getUserName());
+                    request.getSession().setAttribute("userId",userVo.getUserId());
                     response.sendRedirect(request.getContextPath()+"/index/index.html");
                     model.setViewName("index/index");
                 }
@@ -151,5 +170,67 @@ public class IndexController {
             e.printStackTrace();
         }
         return model;
+    }
+    /* *
+    * @author :     mym
+    * @date Date :  2018/9/24 15:25
+    * @version :    V1.0
+    * @describe :   跳转到发布秘密页
+    * @param :      
+    * @return :     
+    */
+    @RequestMapping("/toReleaseArticlePage")
+    public ModelAndView toReleaseArticlePage(ModelAndView model,HttpServletRequest request){
+        try {
+            Object username = request.getSession().getAttribute("userName");
+            if(username==null){
+                model.addObject("loginType",null);//访问首页没登录时将登录按钮显示否则隐藏
+            }else{
+                model.addObject("loginType","logged");
+            }
+            model.setViewName("index/releaseArticlePage");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return model;
+    }
+    /* *
+    * @author :     mym
+    * @date Date :  2018/9/24 15:30
+    * @version :    V1.0
+    * @describe :   发布秘密
+    * @param :
+    * @return :
+    */
+    @RequestMapping("/addReleaseArticle")
+    @ResponseBody
+    public JsonData addReleaseArticle(String vo,HttpServletRequest request){
+        JsonData jsonData = new JsonData();
+        try{
+            Object userId = request.getSession().getAttribute("userId");
+            if(!StringUtils.isEmpty(vo)) {
+                ArticleVo articleVo = JSON.parseObject(vo, ArticleVo.class);
+                articleVo.setArticleId(UUIDUtils.getUUID());
+                if(userId !=null ){
+                    articleVo.setUserId(userId.toString());
+                }
+                articleVo.setArticleUsername(indexService.setlectStageName());
+                articleVo.setBrowse(0L);
+                articleVo.setCreateDate(new Date());
+                articleVo.setCreateIp(IpInfoUtils.getVisitIp(request));
+                articleVo.setDeleteTag("N");
+                articleVo.setReportNum(0);
+                articleVo.setReportTag("N");
+                articleVo.setUpdateDate(null);
+                articleVo.setUpdateIp("");
+                indexService.insertArticleVo(articleVo);
+                jsonData.setMsg("秘密分享成功！");
+                jsonData.setStatus(true);
+            }
+        } catch (Exception e) {
+            jsonData.setMsg("发布秘密失败，请稍后重试！");
+            e.printStackTrace();
+        }
+        return jsonData;
     }
 }

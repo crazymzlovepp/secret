@@ -2,6 +2,8 @@ package com.secret.mapper;
 
 import com.secret.pojo.ArticleVo;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface ArticleVoMapper {
@@ -14,4 +16,6 @@ public interface ArticleVoMapper {
     List<ArticleVo> selectAll();
 
     int updateByPrimaryKey(ArticleVo articleVo);
+    //多条件查询秘密数据
+    List<ArticleVo> selectArticleVoListByParam(Map<String, Object> paramMap);
 }

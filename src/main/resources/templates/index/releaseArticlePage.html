@@ -58,11 +58,6 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="#">secret</a>
         </div>
-        <div>
-            <ul class="nav nav-pills navbar-nav navbar-left">
-                <li class="active" id="goToHeader_id" onclick="searchData('goToHeader_id')"><a href="#">返回首页</a></li>
-            </ul>
-        </div>
         <ul class="nav navbar-nav navbar-right">
             <li id="register_id" onclick="loginOrRegister('register_id')"><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
             <#if loginType?exists><!--已经登录-->
@@ -84,13 +79,13 @@
     </div>-->
     <!--主内容区域-->
     <div id="main_id">
-        <form id="addReleaseArticle_form" method="post" action="/index/addReleaseArticle.html" autocomplete="off">
-        文章名称<input type="text" name="articleTitle">
-            类型<select name="articleType">
+        <form id="addReleaseArticle_form" autocomplete="off">
+        文章名称<input type="text" name="articleTitle" id="articleTitle_id">
+            类型<select name="articleType" id="articleType_id">
                 <option value="1">公开</option>
                 <option value="2">私密</option>
                 </select>
-            内容<textarea name="content" style="margin: 0px; width: 767px; height: 468px;"></textarea>
+            内容<textarea name="content" id="content_id_add" style="margin: 0px; width: 767px; height: 468px;"></textarea>
         </form>
     </div>
     <!--右侧部分-->
@@ -103,7 +98,7 @@
         </div>
         <div style="margin-left:25%;margin-top:35%;">
             <a href="#" onclick="addReleaseArticle()" class="button button-3d button-primary button-pill button-small">保存秘密</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="#" onclick="goTop()" class="button button-3d button-primary button-pill button-small">返回顶部</a>
+            <a href="#" onclick="goHeader()" class="button button-3d button-primary button-pill button-small">返回首页</a>
         </div>
     </div>
 </div>
@@ -143,12 +138,30 @@
         window.location.href = "/index/loginOrRegister.html?id="+id;
     }
     //返回顶部
-    function goTop(){
-        $("html,body").animate({scrollTop:0},500);
+    function goHeader(){
+        window.location.href = "/index/index.html";
     }
     //保存秘密
     function addReleaseArticle(){
-        $("#addReleaseArticle_form").submit();
+        var vo = $('#addReleaseArticle_form').serializeJSON();
+        $.ajax({
+            url:"/index/addReleaseArticle.html",
+            dataType:"json",
+            method:"post",
+            data:{vo:vo},
+            success:function(data){
+                if(data.status != null && data.status == true){
+                    bootbox.alert({
+                        message: data.msg,
+                        size: 'small'
+                    });
+                    //清空输入框
+                    $("#articleTitle_id").val("");
+                    $("#articleType_id").val("");
+                    $("#content_id_add").val("");
+                }
+            }
+        });
     }
 </script>
 </html>

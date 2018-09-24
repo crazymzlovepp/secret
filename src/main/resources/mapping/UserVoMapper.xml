@@ -74,4 +74,8 @@
     where user_name = #{userName,jdbcType=VARCHAR}
     and password = #{password,jdbcType=VARCHAR}
   </select>
+  <!--随机取一个艺名-->
+  <select id="setlectStageNameRandom" parameterType="java.lang.String" resultType="java.lang.String">
+    select sn.stage_name from stage_name sn order by rand() limit 1;
+  </select>
 </mapper>
