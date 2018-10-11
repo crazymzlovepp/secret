@@ -113,7 +113,7 @@
         <#if articleVoList?exists && (articleVoList?size>0)>
             <#list articleVoList as articleVo>
             <div>
-                <p><b>${articleVo.articleUsername!''}</b>&nbsp;&nbsp;创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}
+                <p><b>${articleVo.articleUsername!''}</b>&nbsp;&nbsp;创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}</p>
                 <p>${articleVo.articleTitle!'默认标题'}</p>
                 <textarea style="resize:none;width:95%;height:420px;">${articleVo.content!'暂无内容'}</textarea>
             </div>
@@ -172,13 +172,24 @@
         }else if(id !=null && id =="goToHeader_id"){
             window.location.href = "/index/index.html";
         }else{//加载对应的数据
-            $.ajax(function(){
-                url:"",
+            $.ajax({
+                url:"/index/selectArticleByParam.html",
                 type:"POST",
-                data:{type:"type"},
                 dataType:"json",
+                data:{type:id},
                 success:function(data){
-
+                    $("#main_id").empty();
+                    var html = "";
+                    if(data.status == true && data.object != null){
+                        var articleArr = data.object;
+                        for (var i in articleArr){
+                            html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
+                                +"</p><p>"+articleArr[i].articleTitle+"</p>"
+                                +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
+                                +"</div>";
+                        }
+                        $("#main_id").prepend(html);
+                    }
                 }
             });
         }
@@ -204,5 +215,21 @@
             window.location.href = "/index/toReleaseArticlePage.html";
         }
     }
+    //格式化日期
+    function forMatterDate(date,expression){
+        var time =  new Date(date);
+        var y = time.getFullYear();
+        var M = time.getMonth()+1;
+        var d = time.getDate();
+        var h = time.getHours();
+        var m = time.getMinutes();
+        var s = time.getSeconds();
+        if(expression == "yyyy-MM-dd HH:mm:ss"){
+            return y+"-"+add0(M)+"-"+add0(d)+" "+add0(h)+":"+add0(m)+":"+add0(s);
+        }else{
+            return "";
+        }
+    }
+    function add0(m){return m<10?'0'+m:m }
 </script>
 </html>

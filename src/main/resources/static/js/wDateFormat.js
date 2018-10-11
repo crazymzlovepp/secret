@@ -29,6 +29,9 @@ function addDate(dd,dadd){
 	return a;
 }
 function wDateFormat(now, mask) {
+	if(now == ""||now == null || now == "null" || now == undefined || now == "undefined"){
+	     return "";
+	}
 	var d = now;
 	var zeroize = function(value, length) {
 		if (!length)

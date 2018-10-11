@@ -77,7 +77,7 @@
     <if test="endDate != null and endDate !=''">
       and create_date &lt; #{endDate}
     </if>
-    order by browse desc,create_date
+    order by browse desc,create_date desc
     <if test="currentPage != null and pageSize !=null">
       LIMIT ${(currentPage-1)*pageSize}, ${pageSize}
     </if>

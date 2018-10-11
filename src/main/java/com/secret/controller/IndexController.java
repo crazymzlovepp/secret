@@ -8,19 +8,16 @@ import com.secret.common.utils.UUIDUtils;
 import com.secret.pojo.ArticleVo;
 import com.secret.pojo.UserVo;
 import com.secret.service.IndexService;
+import org.apache.commons.httpclient.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author      mym
@@ -229,6 +226,66 @@ public class IndexController {
             }
         } catch (Exception e) {
             jsonData.setMsg("发布秘密失败，请稍后重试！");
+            e.printStackTrace();
+        }
+        return jsonData;
+    }
+    /* *
+    * @author :     mym
+    * @date Date :  2018/10/11 21:09
+    * @version :    V1.0
+    * @describe :   根据选择的秘密类型查询对应的秘密数据
+    * @param :      
+    * @return :     
+    */
+    @RequestMapping("/selectArticleByParam")
+    @ResponseBody
+    public JsonData selectArticleByParam(String type){
+        JsonData jsonData = new JsonData();
+        Map<String,Object> paramMap = new HashMap<>();
+        //当前系统时间
+        Date nowDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(nowDate);
+        //起始、截止时间
+        String start =  "";
+        String end =  "";
+        try{
+            paramMap.put("currentPage",1);
+            paramMap.put("pageSize",15);
+            //根据type类型来加载对应的数据
+            if(!StringUtils.isEmpty(type)){
+                if(type.equals("24_hours_id")){//24小时最热
+                    start = DateFormatterUtils.getYyyyMmDdStr(nowDate);
+                    end = start;
+                }if(type.equals("7_days_id")){//7天最热
+                    calendar.add(Calendar.DAY_OF_YEAR,-6);
+                    start = DateFormatterUtils.getYyyyMmDdStr(calendar.getTime());
+                    end = DateFormatterUtils.getYyyyMmDdStr(nowDate);
+                }else if(type.equals("the_month_id")){//当月最热
+                    start = DateFormatterUtils.getYyyyMmStr(nowDate)+"-01";
+                    end = DateFormatterUtils.getYyyyMmDdStr(nowDate);
+                }else if(type.equals("three_month_id")){//三月最热
+                    calendar.add(Calendar.MONTH,-3);
+                    start = DateFormatterUtils.getYyyyMmDdStr(calendar.getTime());
+                    end = DateFormatterUtils.getYyyyMmDdStr(nowDate);
+                }else if(type.equals("the_year_id")){//当年最热
+                    start = DateFormatterUtils.getYyyyStr(nowDate)+"-01-01";
+                    end = DateFormatterUtils.getYyyyMmDdStr(nowDate);
+                }else if(type.equals("myself_id")){//自己的
+
+                }
+                paramMap.put("startDate",start+" 00:00:00");
+                paramMap.put("endDate",end+" 23:59:59");
+            }else{
+                start = DateFormatterUtils.getYyyyMmDdStr(nowDate);
+                paramMap.put("startDate",start+" 00:00:00");
+                paramMap.put("endDate",start+" 23:59:59");
+            }
+            List<ArticleVo> articleVoList = indexService.selectArticleVoListByParam(paramMap);
+            jsonData.setObject(articleVoList);
+            jsonData.setStatus(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return jsonData;
