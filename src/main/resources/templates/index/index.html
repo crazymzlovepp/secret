@@ -113,9 +113,9 @@
         <#if articleVoList?exists && (articleVoList?size>0)>
             <#list articleVoList as articleVo>
             <div>
-                <p>${articleVo.articleUsername!''}创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}
+                <p><b>${articleVo.articleUsername!''}</b>&nbsp;&nbsp;创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}
                 <p>${articleVo.articleTitle!'默认标题'}</p>
-                <textarea rows="20" cols="80">${articleVo.content!'暂无内容'}</textarea>
+                <textarea style="resize:none;width:95%;height:420px;">${articleVo.content!'暂无内容'}</textarea>
             </div>
             </#list>
         </#if>
@@ -171,6 +171,16 @@
             }
         }else if(id !=null && id =="goToHeader_id"){
             window.location.href = "/index/index.html";
+        }else{//加载对应的数据
+            $.ajax(function(){
+                url:"",
+                type:"POST",
+                data:{type:"type"},
+                dataType:"json",
+                success:function(data){
+
+                }
+            });
         }
     }
     //登录或者注册或者退出
