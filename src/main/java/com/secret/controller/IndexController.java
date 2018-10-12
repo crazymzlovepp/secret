@@ -48,9 +48,11 @@ public class IndexController {
 		try {
             // 获取cookie信息
             Cookie[] cookies = request.getCookies();
-            for (int i = 0; i < cookies.length; i++) {
-                if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
-                    userId = cookies[i].getValue();
+            if(cookies != null){
+                for (int i = 0; i < cookies.length; i++) {
+                    if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
+                        userId = cookies[i].getValue();
+                    }
                 }
             }
             if(StringUtils.isEmpty(userId)){
@@ -88,10 +90,12 @@ public class IndexController {
             }else if(!StringUtils.isEmpty(id) && id.equals("layout_id")){//退出登录
                 // 删除cookie信息
                 Cookie[] cookies = request.getCookies();
-                for (int i = 0; i < cookies.length; i++) {
-                    if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
-                        cookies[i].setMaxAge(0);
-                        response.addCookie(cookies[i]);
+                if(cookies != null){
+                    for (int i = 0; i < cookies.length; i++) {
+                        if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
+                            cookies[i].setMaxAge(0);
+                            response.addCookie(cookies[i]);
+                        }
                     }
                 }
                 response.sendRedirect(request.getContextPath()+"/index/index.html");
@@ -129,11 +133,11 @@ public class IndexController {
                     model.setViewName("index/index");
                 }else{
                     model.addObject("errorInfo","用户名或密码错误！");
-                    model.setViewName("loginOrRegister");
+                    model.setViewName("index/loginOrRegister");
                 }
             }else{
                 model.addObject("errorInfo","用户名或密码不能为空！");
-                model.setViewName("loginOrRegister");
+                model.setViewName("index/loginOrRegister");
             }
 
         } catch (Exception e) {
