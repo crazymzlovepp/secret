@@ -8,13 +8,14 @@ import com.secret.common.utils.UUIDUtils;
 import com.secret.pojo.ArticleVo;
 import com.secret.pojo.UserVo;
 import com.secret.service.IndexService;
-import org.apache.commons.httpclient.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -43,9 +44,16 @@ public class IndexController {
 	@RequestMapping("/index")
 	public ModelAndView goToIndex(ModelAndView model,HttpServletRequest request,String userName){
 	    Map<String,Object> paramMap = new HashMap<>();
+        String userId = "";
 		try {
-            Object userId = request.getSession().getAttribute("userId");
-            if(userId==null){
+            // 获取cookie信息
+            Cookie[] cookies = request.getCookies();
+            for (int i = 0; i < cookies.length; i++) {
+                if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
+                    userId = cookies[i].getValue();
+                }
+            }
+            if(StringUtils.isEmpty(userId)){
                 model.addObject("loginType",null);//访问首页没登录时将登录按钮显示否则隐藏
             }else{
                 model.addObject("loginType","logged");
@@ -75,12 +83,17 @@ public class IndexController {
     @RequestMapping("/loginOrRegister")
     public ModelAndView loginOrRegister(ModelAndView model, String id,HttpServletRequest request,HttpServletResponse response){
         try {
-            if(!StringUtils.isEmpty(id) && id.equals("login_id")){//登录
-                model.setViewName("index/login");
-            }else if(!StringUtils.isEmpty(id) && id.equals("register_id")){//注册
-                model.setViewName("index/register");
+            if(!StringUtils.isEmpty(id) && id.equals("loginOrRegister_id")){//登录/注册
+                model.setViewName("index/loginOrRegister");
             }else if(!StringUtils.isEmpty(id) && id.equals("layout_id")){//退出登录
-                request.getSession().removeAttribute("userId");
+                // 删除cookie信息
+                Cookie[] cookies = request.getCookies();
+                for (int i = 0; i < cookies.length; i++) {
+                    if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
+                        cookies[i].setMaxAge(0);
+                        response.addCookie(cookies[i]);
+                    }
+                }
                 response.sendRedirect(request.getContextPath()+"/index/index.html");
                 model.setViewName("index/index");
             }
@@ -102,19 +115,25 @@ public class IndexController {
         try {
             String userName = request.getParameter("userName");
             String password = request.getParameter("password");
+            String sevenLoginSelf = request.getParameter("sevenLoginSelf");
             if(!StringUtils.isEmpty(userName) &&!StringUtils.isEmpty(password)){
                 UserVo userVo = indexService.selectUserByuserNameAndPassword(userName,password);
                 if(userVo != null){
-                    request.getSession().setAttribute("userId",userVo.getUserId());
+                    //request.getSession().setAttribute("userId",userVo.getUserId());
+                    Cookie userId_Cookie = new Cookie("userId",userVo.getUserId());
+                    if(!StringUtils.isEmpty(sevenLoginSelf) && sevenLoginSelf.equals("on")){//7天免密
+                        userId_Cookie.setMaxAge(60*60*24*7);
+                    }
+                    response.addCookie(userId_Cookie);
                     response.sendRedirect(request.getContextPath()+"/index/index.html");
                     model.setViewName("index/index");
                 }else{
                     model.addObject("errorInfo","用户名或密码错误！");
-                    model.setViewName("index/login");
+                    model.setViewName("loginOrRegister");
                 }
             }else{
                 model.addObject("errorInfo","用户名或密码不能为空！");
-                model.setViewName("index/login");
+                model.setViewName("loginOrRegister");
             }
 
         } catch (Exception e) {
@@ -134,11 +153,15 @@ public class IndexController {
     public ModelAndView register(ModelAndView model, UserVo userVo,HttpServletRequest request, HttpServletResponse response){
         try {
             if(!StringUtils.isEmpty(userVo.getUserName()) && !StringUtils.isEmpty(userVo.getPassword())
-                    &&!StringUtils.isEmpty(userVo.getBirthPlace()) && !StringUtils.isEmpty(userVo.getHobby())){
+                    && !StringUtils.isEmpty(userVo.getBirthPlace()) && !StringUtils.isEmpty(userVo.getHobby())){
                 UserVo checkUserVo  = indexService.selectUserByUserName(userVo.getUserName());
                 if(checkUserVo != null){
                     model.addObject("errorInfo","用户名已存在，请重新输入！");
-                    model.setViewName("index/register");
+                    model.setViewName("index/loginOrRegister");
+                }else if(!StringUtils.isEmpty(userVo.getPassword()) && !StringUtils.isEmpty(userVo.getPasswordConfirm())
+                && !userVo.getPassword().equals(userVo.getPasswordConfirm())){
+                    model.addObject("errorInfo","两次输入的密码不一致，请重新输入！");
+                    model.setViewName("index/loginOrRegister");
                 }else{
                     userVo.setRegisterIp(IpInfoUtils.getVisitIp(request));
                     String[] ipAddressArr = IpInfoUtils.getIpAddress(IpInfoUtils.getVisitIp(request)).split("/");
@@ -152,18 +175,18 @@ public class IndexController {
                         }
                     }
                     indexService.insertUserVo(userVo);
-                    request.getSession().setAttribute("userId",userVo.getUserId());
-                    response.sendRedirect(request.getContextPath()+"/index/index.html");
-                    model.setViewName("index/index");
+                    //request.getSession().setAttribute("userId",userVo.getUserId());
+                    response.sendRedirect(request.getContextPath()+"/index/loginOrRegister.html?id=loginOrRegister_id");
+                    model.setViewName("index/loginOrRegister");
                 }
             }else{
                 model.addObject("errorInfo","必填项有空！");
-                model.setViewName("index/register");
+                model.setViewName("index/loginOrRegister");
             }
 
         } catch (Exception e) {
             model.addObject("errorInfo","新增用户失败，请稍后再试！");
-            model.setViewName("index/register");
+            model.setViewName("index/loginOrRegister");
             e.printStackTrace();
         }
         return model;

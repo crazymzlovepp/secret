@@ -29,8 +29,20 @@ public class UserVo implements Serializable {
     private String registerProvince;
 
     private String registerCity;
+    /**
+     * 注册时密码二次输入
+     */
+    private String passwordConfirm;
 
     private static final long serialVersionUID = 1L;
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
 
     public String getUserId() {
         return userId;
