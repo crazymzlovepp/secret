@@ -71,11 +71,19 @@
     create_date,content
     from article
     where 1=1
+    <!-- 用户id -->
+    <if test="userId != null and userId !=''">
+        and user_id = #{userId}
+    </if>
     <if test="startDate != null and startDate !=''">
       and create_date &gt; #{startDate}
     </if>
     <if test="endDate != null and endDate !=''">
       and create_date &lt; #{endDate}
+    </if>
+    <!-- 检索条件 -->
+    <if test="param != null and param !=''">
+        and (article_username like concat("%",#{param},"%") or article_title like concat("%",#{param},"%") or content like concat("%",#{param},"%"))
     </if>
     order by browse desc,create_date desc
     <if test="currentPage != null and pageSize !=null">

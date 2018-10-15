@@ -85,9 +85,9 @@
         </div>
         <form class="navbar-form navbar-left" role="search">
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
+                <input type="text" id="search_id" class="form-control" placeholder="作者/标题/文章关键字">
             </div>
-            <a href="#" class="button button-primary button-pill button-tiny">Go</a>
+            <a href="#" onclick="searchArticleByParam()" class="button button-primary button-pill button-tiny">Go</a>
         </form>
         <ul class="nav navbar-nav navbar-right">
             <#if loginType?exists><!--已经登录-->
@@ -112,9 +112,10 @@
         <#if articleVoList?exists && (articleVoList?size>0)>
             <#list articleVoList as articleVo>
             <div>
-                <p><b>${articleVo.articleUsername!''}</b>&nbsp;&nbsp;创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}</p>
+                <p><b>${articleVo.articleUsername!''}</b>&nbsp;&nbsp;创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}&nbsp;&nbsp;<button>举报</button></p>
                 <p>${articleVo.articleTitle!'默认标题'}</p>
                 <textarea style="resize:none;width:95%;height:420px;">${articleVo.content!'暂无内容'}</textarea>
+                <p><button>赞</button><button>踩</button></p>
             </div>
             </#list>
         </#if>
@@ -167,6 +168,30 @@
             //校验是否登陆
             if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
                 $("#noLoginWarning_id").show();
+            }else{
+                $.ajax({
+                    url:"/index/selectArticleByParam.html",
+                    type:"POST",
+                    dataType:"json",
+                    data:{type:id},
+                    success:function(data){
+                        $("#main_id").empty();
+                        var html = "";
+                        if(data.status == true && data.object != null){
+                            var articleArr = data.object;
+                            for (var i in articleArr){
+                                html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
+                                    +"<button>修改</button>"
+                                    +"<button>删除</button>"
+                                    +"</p><p>"+articleArr[i].articleTitle+"</p>"
+                                    +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
+                                    +"<p><button>赞</button><button>踩</button></p>"
+                                    +"</div>";
+                            }
+                            $("#main_id").prepend(html);
+                        }
+                    }
+                });
             }
         }else if(id !=null && id =="goToHeader_id"){
             window.location.href = "/index/index.html";
@@ -183,8 +208,10 @@
                         var articleArr = data.object;
                         for (var i in articleArr){
                             html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
+                                +"<button>举报</button>"
                                 +"</p><p>"+articleArr[i].articleTitle+"</p>"
                                 +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
+                                +"<p><button>赞</button><button>踩</button></p>"
                                 +"</div>";
                         }
                         $("#main_id").prepend(html);
@@ -212,6 +239,36 @@
             $("#noLoginWarning_id").show();
         }else{
             window.location.href = "/index/toReleaseArticlePage.html";
+        }
+    }
+    //根据输入的信息查询秘密
+    function searchArticleByParam(){
+        var param = $("#search_id").val();
+        if(param == null || param == "" || param == undefined || param == "undefined"){
+            return false;
+        }else{
+            $.ajax({
+                url:"/index/selectArticleByParam.html",
+                type:"POST",
+                dataType:"json",
+                data:{type:"search_id",param:param},
+                success:function(data){
+                    $("#main_id").empty();
+                    var html = "";
+                    if(data.status == true && data.object != null){
+                        var articleArr = data.object;
+                        for (var i in articleArr){
+                            html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
+                                +"<button>举报</button>"
+                                +"</p><p>"+articleArr[i].articleTitle+"</p>"
+                                +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
+                                +"<p><button>赞</button><button>踩</button></p>"
+                                +"</div>";
+                        }
+                        $("#main_id").prepend(html);
+                    }
+                }
+            });
         }
     }
     //格式化日期

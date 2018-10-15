@@ -292,7 +292,7 @@ public class IndexController {
     */
     @RequestMapping("/selectArticleByParam")
     @ResponseBody
-    public JsonData selectArticleByParam(String type){
+    public JsonData selectArticleByParam(String type,String param,HttpServletRequest request){
         JsonData jsonData = new JsonData();
         Map<String,Object> paramMap = new HashMap<>();
         //当前系统时间
@@ -305,6 +305,7 @@ public class IndexController {
         try{
             paramMap.put("currentPage",1);
             paramMap.put("pageSize",15);
+            paramMap.put("param",param);
             //根据type类型来加载对应的数据
             if(!StringUtils.isEmpty(type)){
                 if(type.equals("24_hours_id")){//24小时最热
@@ -325,10 +326,23 @@ public class IndexController {
                     start = DateFormatterUtils.getYyyyStr(nowDate)+"-01-01";
                     end = DateFormatterUtils.getYyyyMmDdStr(nowDate);
                 }else if(type.equals("myself_id")){//自己的
-
+                    // 获取cookie信息
+                    Cookie[] cookies = request.getCookies();
+                    if(cookies != null){
+                        for (int i = 0; i < cookies.length; i++) {
+                            if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
+                                paramMap.put("userId",cookies[i].getValue());
+                         }
+                        }
+                     }
+                }/*else if(type.equals("search_id")){//检索
+                }*/
+                if(!StringUtils.isEmpty(start)){
+                    paramMap.put("startDate",start+" 00:00:00");
                 }
-                paramMap.put("startDate",start+" 00:00:00");
-                paramMap.put("endDate",end+" 23:59:59");
+                if(!StringUtils.isEmpty(end)){
+                    paramMap.put("endDate",end+" 23:59:59");
+                }
             }else{
                 start = DateFormatterUtils.getYyyyMmDdStr(nowDate);
                 paramMap.put("startDate",start+" 00:00:00");
