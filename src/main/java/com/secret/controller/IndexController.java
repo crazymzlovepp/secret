@@ -86,6 +86,7 @@ public class IndexController {
     public ModelAndView loginOrRegister(ModelAndView model, String id,HttpServletRequest request,HttpServletResponse response){
         try {
             if(!StringUtils.isEmpty(id) && id.equals("loginOrRegister_id")){//登录/注册
+                model.addObject("sourceType","login");
                 model.setViewName("index/loginOrRegister");
             }else if(!StringUtils.isEmpty(id) && id.equals("layout_id")){//退出登录
                 // 删除cookie信息
@@ -133,10 +134,12 @@ public class IndexController {
                     model.setViewName("index/index");
                 }else{
                     model.addObject("errorInfo","用户名或密码错误！");
+                    model.addObject("sourceType","login");
                     model.setViewName("index/loginOrRegister");
                 }
             }else{
                 model.addObject("errorInfo","用户名或密码不能为空！");
+                model.addObject("sourceType","login");
                 model.setViewName("index/loginOrRegister");
             }
 
@@ -161,10 +164,12 @@ public class IndexController {
                 UserVo checkUserVo  = indexService.selectUserByUserName(userVo.getUserName());
                 if(checkUserVo != null){
                     model.addObject("errorInfo","用户名已存在，请重新输入！");
+                    model.addObject("sourceType","register");
                     model.setViewName("index/loginOrRegister");
                 }else if(!StringUtils.isEmpty(userVo.getPassword()) && !StringUtils.isEmpty(userVo.getPasswordConfirm())
                 && !userVo.getPassword().equals(userVo.getPasswordConfirm())){
                     model.addObject("errorInfo","两次输入的密码不一致，请重新输入！");
+                    model.addObject("sourceType","register");
                     model.setViewName("index/loginOrRegister");
                 }else{
                     userVo.setRegisterIp(IpInfoUtils.getVisitIp(request));
