@@ -210,9 +210,18 @@ public class IndexController {
     */
     @RequestMapping("/toReleaseArticlePage")
     public ModelAndView toReleaseArticlePage(ModelAndView model,HttpServletRequest request){
+        String userId = "";
         try {
-            Object username = request.getSession().getAttribute("userName");
-            if(username==null){
+            // 获取cookie信息
+            Cookie[] cookies = request.getCookies();
+            if(cookies != null){
+                for (int i = 0; i < cookies.length; i++) {
+                    if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
+                        userId = cookies[i].getValue();
+                    }
+                }
+            }
+            if(StringUtils.isEmpty(userId)){
                 model.addObject("loginType",null);//访问首页没登录时将登录按钮显示否则隐藏
             }else{
                 model.addObject("loginType","logged");
@@ -235,14 +244,20 @@ public class IndexController {
     @ResponseBody
     public JsonData addReleaseArticle(String vo,HttpServletRequest request){
         JsonData jsonData = new JsonData();
-        try{
-            Object userId = request.getSession().getAttribute("userId");
+        String userId = "";
+        try {
+            // 获取cookie信息
+            Cookie[] cookies = request.getCookies();
+            if(cookies != null){
+                for (int i = 0; i < cookies.length; i++) {
+                    if(cookies[i].getName() != null && cookies[i].getName().equals("userId")){
+                        userId = cookies[i].getValue();
+                    }
+                }
+            }
             if(!StringUtils.isEmpty(vo)) {
                 ArticleVo articleVo = JSON.parseObject(vo, ArticleVo.class);
                 articleVo.setArticleId(UUIDUtils.getUUID());
-                if(userId !=null ){
-                    articleVo.setUserId(userId.toString());
-                }
                 articleVo.setArticleUsername(indexService.setlectStageName());
                 articleVo.setBrowse(0L);
                 articleVo.setCreateDate(new Date());
@@ -252,9 +267,14 @@ public class IndexController {
                 articleVo.setReportTag("N");
                 articleVo.setUpdateDate(null);
                 articleVo.setUpdateIp("");
-                indexService.insertArticleVo(articleVo);
-                jsonData.setMsg("秘密分享成功！");
-                jsonData.setStatus(true);
+                if(!StringUtils.isEmpty(userId)){
+                    articleVo.setUserId(userId);
+                    indexService.insertArticleVo(articleVo);
+                    jsonData.setMsg("秘密分享成功！");
+                    jsonData.setStatus(true);
+                }else{
+                    jsonData.setMsg("发布秘密失败，请稍后重试！");
+                }
             }
         } catch (Exception e) {
             jsonData.setMsg("发布秘密失败，请稍后重试！");
