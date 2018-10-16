@@ -77,4 +77,9 @@ public class IndexServiceImpl implements IndexService {
         }
         return returnArticleVoList;
     }
+    //更新文章的点赞量、踩量、浏览量
+    @Override
+    public void updateReleaseArticle(ArticleVo articleVo) {
+        articleVoMapper.updateReleaseArticle(articleVo);
+    }
 }

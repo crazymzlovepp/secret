@@ -92,6 +92,7 @@
         <ul class="nav navbar-nav navbar-right">
             <#if loginType?exists><!--已经登录-->
             <li id="layout_id" onclick="loginOrRegister('layout_id')"><a href="#"><span class="glyphicon glyphicon-log-in"></span> 退出</a></li>
+            <input type="hidden" id="userId_hidden_id" value="${loginUserId!''}">
             <#else><!--未登录-->
             <li id="login_id" onclick="loginOrRegister('loginOrRegister_id')"><a href="#"><span class="glyphicon glyphicon-user"></span> 登录/注册</a></li>
             </#if>
@@ -115,7 +116,14 @@
                 <p><b>${articleVo.articleUsername!''}</b>&nbsp;&nbsp;创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}&nbsp;&nbsp;<button>举报</button></p>
                 <p>${articleVo.articleTitle!'默认标题'}</p>
                 <textarea style="resize:none;width:95%;height:420px;">${articleVo.content!'暂无内容'}</textarea>
-                <p><button>赞</button><button>踩</button></p>
+                <p>
+                    总浏览量：<span id="${articleVo.articleId}_browse">${articleVo.browse!'0'}</span><span>+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button onclick="zan('${articleVo.articleId}')">赞:&nbsp;</button>
+                    <span id="${articleVo.articleId}_zan">${articleVo.zanNum!'0'}</span>
+                    &nbsp;&nbsp;
+                    <button onclick="cai('${articleVo.articleId}')">踩:&nbsp;</button>
+                    <span id="${articleVo.articleId}_cai">${articleVo.caiNum!'0'}</span>
+                </p>
             </div>
             </#list>
         </#if>
@@ -181,11 +189,16 @@
                             var articleArr = data.object;
                             for (var i in articleArr){
                                 html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
-                                    +"<button>修改</button>"
+                                    +"<button>修改</button>&nbsp;&nbsp;"
                                     +"<button>删除</button>"
                                     +"</p><p>"+articleArr[i].articleTitle+"</p>"
                                     +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
-                                    +"<p><button>赞</button><button>踩</button></p>"
+                                    +"<p>"
+                                    +"总浏览量：<span id='"+articleArr[i].articleId+"_browse'>"+checkIsNotBlank(articleArr[i].browse)?articleArr[i].browse:0+"</span><span>+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                    +"赞:&nbsp;<span id='"+articleArr[i].articleId+"_zan'>"+checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0+"</span>"
+                                    +"&nbsp;&nbsp;"
+                                    +"踩:&nbsp;<span id='"+articleArr[i].articleId+"_cai'>"+checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0+"</span>"
+                                    +"</p>"
                                     +"</div>";
                             }
                             $("#main_id").prepend(html);
@@ -211,7 +224,14 @@
                                 +"<button>举报</button>"
                                 +"</p><p>"+articleArr[i].articleTitle+"</p>"
                                 +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
-                                +"<p><button>赞</button><button>踩</button></p>"
+                                +"<p>"
+                                +"总浏览量：<span id='"+articleArr[i].articleId+"_browse'>"+checkIsNotBlank(articleArr[i].browse)?articleArr[i].browse:0+"</span><span>+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                +"<button onclick=\"zan('"+articleArr[i].articleId+"')\">赞:&nbsp;</button>"
+                                +"<span id='"+articleArr[i].articleId+"_zan'>"+checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0+"</span>"
+                                +"&nbsp;&nbsp;"
+                                +"<button onclick=\"cai('"+articleArr[i].articleId+"')\">踩:&nbsp;</button>"
+                                +"<span id='"+articleArr[i].articleId+"_cai'>"+checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0+"</span>"
+                                +"</p>"
                                 +"</div>";
                         }
                         $("#main_id").prepend(html);
@@ -244,7 +264,7 @@
     //根据输入的信息查询秘密
     function searchArticleByParam(){
         var param = $("#search_id").val();
-        if(param == null || param == "" || param == undefined || param == "undefined"){
+        if(checkIsNotBlank(param) == false){
             return false;
         }else{
             $.ajax({
@@ -286,6 +306,69 @@
             return "";
         }
     }
-    function add0(m){return m<10?'0'+m:m }
+    //格式化小时 判断大于小于9时的自动补0
+    function add0(m){
+        return m<10?'0'+m:m ;
+    }
+    //点赞
+    function zan(articleId){
+            var zanNum = $("#"+articleId+"_zan").text();
+            var caiNum = $("#"+articleId+"_cai").text();
+            if(checkIsNotBlank(zanNum)){
+                zanNum = parseInt(zanNum);
+                zanNum = zanNum + 1;
+                if(checkIsNotBlank(caiNum)){
+                    caiNum = parseInt(caiNum);
+                    $("#"+articleId+"_browse").text(zanNum+caiNum);
+                }else{
+                    $("#"+articleId+"_browse").text(zanNum);
+                }
+                $("#"+articleId+"_zan").text(zanNum);
+                $.ajax({
+                    url:"/index/updateReleaseArticle.html",
+                    type:"POST",
+                    dataType:"json",
+                    data:{articleId:articleId,zanNum:zanNum,caiNum:caiNum,type:"zan"},
+                    success:function(data){
+                            /*if(data.status == false){
+                                bootbox.alert({
+                                    message: data.msg,
+                                    size: 'small'
+                                });
+                            }*/
+                    }
+                });
+            }
+    }
+    //点踩
+    function cai(articleId){
+        var zanNum = $("#"+articleId+"_zan").text();
+        var caiNum = $("#"+articleId+"_cai").text();
+        if(checkIsNotBlank(caiNum)){
+            caiNum = parseInt(caiNum);
+            caiNum = caiNum + 1;
+            if(checkIsNotBlank(zanNum)){
+                zanNum = parseInt(zanNum);
+                $("#"+articleId+"_browse").text(zanNum+caiNum);
+            }else{
+                $("#"+articleId+"_browse").text(caiNum);
+            }
+            $("#"+articleId+"_cai").text(caiNum);
+            $.ajax({
+                url:"/index/updateReleaseArticle.html",
+                type:"POST",
+                dataType:"json",
+                data:{articleId:articleId,zanNum:zanNum,caiNum:caiNum,type:"cai"},
+                success:function(data){
+                    if(data.status == false){
+                        bootbox.alert({
+                            message: data.msg,
+                            size: 'small'
+                        });
+                    }
+                }
+            });
+        }
+    }
 </script>
 </html>

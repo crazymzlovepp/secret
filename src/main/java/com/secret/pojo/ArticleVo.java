@@ -16,6 +16,10 @@ public class ArticleVo implements Serializable {
 
     private Long browse;
 
+    private Long zanNum;
+
+    private Long caiNum;
+
     private String reportTag;
 
     private Integer reportNum;
@@ -33,6 +37,22 @@ public class ArticleVo implements Serializable {
     private String content;
 
     private static final long serialVersionUID = 1L;
+
+    public Long getZanNum() {
+        return zanNum;
+    }
+
+    public void setZanNum(Long zanNum) {
+        this.zanNum = zanNum;
+    }
+
+    public Long getCaiNum() {
+        return caiNum;
+    }
+
+    public void setCaiNum(Long caiNum) {
+        this.caiNum = caiNum;
+    }
 
     public String getArticleId() {
         return articleId;

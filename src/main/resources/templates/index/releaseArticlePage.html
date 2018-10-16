@@ -66,6 +66,7 @@
         <ul class="nav navbar-nav navbar-right">
             <#if loginType?exists><!--已经登录-->
             <li id="layout_id" onclick="loginOrRegister('layout_id')"><a href="#"><span class="glyphicon glyphicon-log-in"></span> 退出</a></li>
+            <input type="hidden" id="userId_hidden_id" value="${loginUserId!''}">
             <#else><!--未登录-->
             <li id="login_id" onclick="loginOrRegister('loginOrRegister_id')"><a href="#"><span class="glyphicon glyphicon-user"></span> 登录/注册</a></li>
             </#if>

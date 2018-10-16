@@ -59,6 +59,7 @@ public class IndexController {
                 model.addObject("loginType",null);//访问首页没登录时将登录按钮显示否则隐藏
             }else{
                 model.addObject("loginType","logged");
+                model.addObject("loginUserId",userId);
             }
             //初始化进入首页  默认查询24小时最热的秘密
             String start = DateFormatterUtils.getYyyyMmDdStr(new Date());
@@ -225,6 +226,7 @@ public class IndexController {
                 model.addObject("loginType",null);//访问首页没登录时将登录按钮显示否则隐藏
             }else{
                 model.addObject("loginType","logged");
+                model.addObject("loginUserId",userId);
             }
             model.setViewName("index/releaseArticlePage");
         } catch (Exception e) {
@@ -352,6 +354,48 @@ public class IndexController {
             jsonData.setObject(articleVoList);
             jsonData.setStatus(true);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonData;
+    }
+    /**
+     * @author      mym
+     * @date        2018/10/16 0016 16:01
+     * @describe    更新文章的点赞量、踩量、浏览量
+     * @version     V1.0
+     * @param       [articleId, zanNum, caiNum, type]
+     * @return      com.secret.common.utils.JsonData
+    */
+    @RequestMapping("/updateReleaseArticle")
+    @ResponseBody
+    public JsonData updateReleaseArticle(String articleId,String zanNum,String caiNum,String type){
+        JsonData jsonData = new JsonData();
+        ArticleVo articleVo = new ArticleVo();
+        Long browse = 0L;
+        try {
+            if(!StringUtils.isEmpty(articleId)){
+                articleVo.setArticleId(articleId);
+                if(!StringUtils.isEmpty(zanNum)){
+                    articleVo.setZanNum(new Long(zanNum));
+                    browse = new Long(zanNum);
+                }
+                if(!StringUtils.isEmpty(caiNum)){
+                    articleVo.setCaiNum(new Long(caiNum));
+                    browse = browse + new Long(caiNum);
+                }
+                articleVo.setBrowse(browse);
+                indexService.updateReleaseArticle(articleVo);
+            }
+        } catch (Exception e) {
+            if(StringUtils.isEmpty(type)){
+                if(type.equals("zan")){
+                    jsonData.setMsg("用力太小，点赞失败咯，补充点能量再来一次吧！");
+                }else{
+                    jsonData.setMsg("脚太滑，没踩上，用劲儿再来一次吧！");
+                }
+            }else{
+                jsonData.setMsg("数据被外星人劫持了，稍后再来吧！");
+            }
             e.printStackTrace();
         }
         return jsonData;

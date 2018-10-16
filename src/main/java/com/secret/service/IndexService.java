@@ -27,4 +27,6 @@ public interface IndexService {
     void insertArticleVo(ArticleVo articleVo);
     //多条件分页查询秘密
     List<ArticleVo> selectArticleVoListByParam(Map<String, Object> paramMap);
+    //更新文章的点赞量、踩量、浏览量
+    void updateReleaseArticle(ArticleVo articleVo);
 }

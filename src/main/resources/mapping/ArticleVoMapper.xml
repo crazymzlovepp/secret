@@ -8,6 +8,8 @@
     <result column="article_title" property="articleTitle" jdbcType="VARCHAR" />
     <result column="article_type" property="articleType" jdbcType="VARCHAR" />
     <result column="browse" property="browse" jdbcType="DECIMAL" />
+    <result column="zan_num" property="zanNum" jdbcType="DECIMAL" />
+    <result column="cai_num" property="caiNum" jdbcType="DECIMAL" />
     <result column="report_tag" property="reportTag" jdbcType="VARCHAR" />
     <result column="report_num" property="reportNum" jdbcType="INTEGER" />
     <result column="delete_tag" property="deleteTag" jdbcType="VARCHAR" />
@@ -24,12 +26,13 @@
   </delete>
   <insert id="insert" parameterType="com.secret.pojo.ArticleVo" >
     insert into article (article_id, user_id, article_username, 
-      article_title, article_type, browse, 
+      article_title, article_type, browse,zan_num,cai_num,
       report_tag, report_num, delete_tag, 
       create_date, update_date, create_ip, 
       update_ip, content)
     values (#{articleId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{articleUsername,jdbcType=VARCHAR}, 
-      #{articleTitle,jdbcType=VARCHAR}, #{articleType,jdbcType=VARCHAR}, #{browse,jdbcType=DECIMAL}, 
+      #{articleTitle,jdbcType=VARCHAR}, #{articleType,jdbcType=VARCHAR}, #{browse,jdbcType=DECIMAL},
+      #{zan_num,jdbcType=DECIMAL}, #{cai_num,jdbcType=DECIMAL},
       #{reportTag,jdbcType=VARCHAR}, #{reportNum,jdbcType=INTEGER}, #{deleteTag,jdbcType=VARCHAR}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{createIp,jdbcType=VARCHAR}, 
       #{updateIp,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
@@ -40,6 +43,8 @@
       article_title = #{articleTitle,jdbcType=VARCHAR},
       article_type = #{articleType,jdbcType=VARCHAR},
       browse = #{browse,jdbcType=DECIMAL},
+      zan_num = #{zanNum,jdbcType=DECIMAL},
+      cai_num = #{caiNum,jdbcType=DECIMAL},
       report_tag = #{reportTag,jdbcType=VARCHAR},
       report_num = #{reportNum,jdbcType=INTEGER},
       delete_tag = #{deleteTag,jdbcType=VARCHAR},
@@ -52,7 +57,7 @@
       and user_id = #{userId,jdbcType=VARCHAR}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
-    select article_id, user_id, article_username, article_title, article_type, browse, 
+    select article_id, user_id, article_username, article_title, article_type, browse,zan_num,cai_num,
     report_tag, report_num, delete_tag, create_date, update_date, create_ip, update_ip, 
     content
     from article
@@ -60,15 +65,15 @@
       and user_id = #{userId,jdbcType=VARCHAR}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select article_id, user_id, article_username, article_title, article_type, browse, 
+    select article_id, user_id, article_username, article_title, article_type, browse,zan_num,cai_num,
     report_tag, report_num, delete_tag, create_date, update_date, create_ip, update_ip, 
     content
     from article
   </select>
   <!--多条件查询秘密-->
   <select id="selectArticleVoListByParam" resultMap="BaseResultMap" parameterType="map" >
-    select article_id, user_id, article_username, article_title,content,browse,
-    create_date,content
+    select article_id, user_id, article_username, article_title,content,browse,zan_num,cai_num,
+      create_date,content
     from article
     where 1=1
     <!-- 用户id -->
@@ -90,4 +95,13 @@
       LIMIT ${(currentPage-1)*pageSize}, ${pageSize}
     </if>
   </select>
+    <!--更新文章的点赞量、踩量、浏览量-->
+  <update id="updateReleaseArticle" parameterType="com.secret.pojo.ArticleVo" >
+  update article
+    set
+      browse = #{browse,jdbcType=DECIMAL},
+      zan_num = #{zanNum,jdbcType=DECIMAL},
+      cai_num = #{caiNum,jdbcType=DECIMAL}
+    where article_id = #{articleId,jdbcType=VARCHAR}
+  </update>
 </mapper>

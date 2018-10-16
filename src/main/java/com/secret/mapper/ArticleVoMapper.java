@@ -18,4 +18,6 @@ public interface ArticleVoMapper {
     int updateByPrimaryKey(ArticleVo articleVo);
     //多条件查询秘密数据
     List<ArticleVo> selectArticleVoListByParam(Map<String, Object> paramMap);
+    //更新文章的点赞量、踩量、浏览量
+    void updateReleaseArticle(ArticleVo articleVo);
 }
