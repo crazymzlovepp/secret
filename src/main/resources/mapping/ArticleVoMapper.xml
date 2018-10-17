@@ -90,7 +90,7 @@
     <if test="param != null and param !=''">
         and (article_username like concat("%",#{param},"%") or article_title like concat("%",#{param},"%") or content like concat("%",#{param},"%"))
     </if>
-    order by browse desc,create_date desc
+    order by browse desc,zan_num desc,cai_num asc,create_date desc
     <if test="currentPage != null and pageSize !=null">
       LIMIT ${(currentPage-1)*pageSize}, ${pageSize}
     </if>

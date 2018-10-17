@@ -187,17 +187,23 @@
                         var html = "";
                         if(data.status == true && data.object != null){
                             var articleArr = data.object;
+                            var browse = "";
+                            var zan = "";
+                            var cai = "";
                             for (var i in articleArr){
+                                browse = checkIsNotBlank(articleArr[i].browse)?articleArr[i].browse:0;
+                                zan = checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0;
+                                cai = checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0;
                                 html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
                                     +"<button>修改</button>&nbsp;&nbsp;"
                                     +"<button>删除</button>"
                                     +"</p><p>"+articleArr[i].articleTitle+"</p>"
                                     +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
                                     +"<p>"
-                                    +"总浏览量：<span id='"+articleArr[i].articleId+"_browse'>"+checkIsNotBlank(articleArr[i].browse)?articleArr[i].browse:0+"</span><span>+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-                                    +"赞:&nbsp;<span id='"+articleArr[i].articleId+"_zan'>"+checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0+"</span>"
+                                    +"总浏览量：<span id='"+articleArr[i].articleId+"_browse'>"+browse+"</span><span>+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                    +"赞:&nbsp;<span id='"+articleArr[i].articleId+"_zan'>"+zan+"</span>"
                                     +"&nbsp;&nbsp;"
-                                    +"踩:&nbsp;<span id='"+articleArr[i].articleId+"_cai'>"+checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0+"</span>"
+                                    +"踩:&nbsp;<span id='"+articleArr[i].articleId+"_cai'>"+cai+"</span>"
                                     +"</p>"
                                     +"</div>";
                             }
@@ -219,18 +225,24 @@
                     var html = "";
                     if(data.status == true && data.object != null){
                         var articleArr = data.object;
+                        var browse = "";
+                        var zan = "";
+                        var cai = "";
                         for (var i in articleArr){
+                            browse = checkIsNotBlank(articleArr[i].browse)?articleArr[i].browse:0;
+                            zan = checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0;
+                            cai = checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0;
                             html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
                                 +"<button>举报</button>"
                                 +"</p><p>"+articleArr[i].articleTitle+"</p>"
                                 +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
                                 +"<p>"
-                                +"总浏览量：<span id='"+articleArr[i].articleId+"_browse'>"+checkIsNotBlank(articleArr[i].browse)?articleArr[i].browse:0+"</span><span>+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                +"总浏览量：<span id='"+articleArr[i].articleId+"_browse'>"+browse+"</span><span>+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
                                 +"<button onclick=\"zan('"+articleArr[i].articleId+"')\">赞:&nbsp;</button>"
-                                +"<span id='"+articleArr[i].articleId+"_zan'>"+checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0+"</span>"
+                                +"<span id='"+articleArr[i].articleId+"_zan'>"+zan+"</span>"
                                 +"&nbsp;&nbsp;"
                                 +"<button onclick=\"cai('"+articleArr[i].articleId+"')\">踩:&nbsp;</button>"
-                                +"<span id='"+articleArr[i].articleId+"_cai'>"+checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0+"</span>"
+                                +"<span id='"+articleArr[i].articleId+"_cai'>"+cai+"</span>"
                                 +"</p>"
                                 +"</div>";
                         }
