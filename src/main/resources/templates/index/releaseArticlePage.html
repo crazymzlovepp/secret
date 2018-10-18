@@ -132,7 +132,16 @@
         if(id !=null && id =="myself_id"){
             //校验是否登陆
             if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
-                $("#noLoginWarning_id").show();
+                //$("#noLoginWarning_id").show();
+                new jBox('Notice', {
+                    animation: 'flip',
+                    color: getColor(),
+                    autoClose: Math.random() * 5000 + 2000,
+                    content: '请登陆后再进行该操作！',
+                    delayOnHover: true,
+                    showCountdown: true,
+                    closeButton: true
+                });
             }
         }else if(id !=null && id =="goToHeader_id"){
             window.location.href = "/index/index.html";
@@ -156,19 +165,29 @@
             data:{vo:vo},
             success:function(data){
                 if(data.status != null && data.status == true){
-                    bootbox.alert({
-                        message: data.msg,
-                        size: 'small'
-                    });
+                        new jBox('Notice', {
+                            animation: 'flip',
+                            color: getColor(),
+                            autoClose: Math.random() * 5000 + 2000,
+                            content: data.msg,
+                            delayOnHover: true,
+                            showCountdown: true,
+                            closeButton: true
+                        });
                     //清空输入框
                     $("#articleTitle_id").val("");
                     $("#articleType_id").val("");
                     $("#content_id_add").val("");
                 }else{
-                    bootbox.alert({
-                        message: data.msg,
-                        size: 'small'
-                    });
+                        new jBox('Notice', {
+                            animation: 'flip',
+                            color: getColor(),
+                            autoClose: Math.random() * 5000 + 2000,
+                            content: data.msg,
+                            delayOnHover: true,
+                            showCountdown: true,
+                            closeButton: true
+                        });
                 }
             }
         });

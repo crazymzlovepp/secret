@@ -113,7 +113,9 @@
         <#if articleVoList?exists && (articleVoList?size>0)>
             <#list articleVoList as articleVo>
             <div>
-                <p><b>${articleVo.articleUsername!''}</b>&nbsp;&nbsp;创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}&nbsp;&nbsp;<button>举报</button></p>
+                <p><b>${articleVo.articleUsername!''}</b>&nbsp;&nbsp;创建于：${articleVo.createDate?string("yyyy-MM-dd HH:mm:ss")}&nbsp;&nbsp;
+                    <button onclick="toReport('${articleVo.articleId}')">举报</button>
+                </p>
                 <p>${articleVo.articleTitle!'默认标题'}</p>
                 <textarea style="resize:none;width:95%;height:420px;">${articleVo.content!'暂无内容'}</textarea>
                 <p>
@@ -175,7 +177,15 @@
         if(id !=null && id =="myself_id"){
             //校验是否登陆
             if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
-                $("#noLoginWarning_id").show();
+                new jBox('Notice', {
+                    animation: 'flip',
+                    color: getColor(),
+                    autoClose: Math.random() * 5000 + 2000,
+                    content: '请登陆后再进行该操作！',
+                    delayOnHover: true,
+                    showCountdown: true,
+                    closeButton: true
+                });
             }else{
                 $.ajax({
                     url:"/index/selectArticleByParam.html",
@@ -233,7 +243,7 @@
                             zan = checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0;
                             cai = checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0;
                             html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
-                                +"<button>举报</button>"
+                                +"<button onclick=\"toReport('"+articleArr[i].articleId+"')\">举报</button>"
                                 +"</p><p>"+articleArr[i].articleTitle+"</p>"
                                 +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
                                 +"<p>"
@@ -268,7 +278,16 @@
     function releaseArticle(){
         //校验是否登陆
         if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
-            $("#noLoginWarning_id").show();
+            //$("#noLoginWarning_id").show();
+            new jBox('Notice', {
+                animation: 'flip',
+                color: getColor(),
+                autoClose: Math.random() * 5000 + 2000,
+                content: '请登陆后再进行该操作！',
+                delayOnHover: true,
+                showCountdown: true,
+                closeButton: true
+            });
         }else{
             window.location.href = "/index/toReleaseArticlePage.html";
         }
@@ -342,12 +361,15 @@
                     dataType:"json",
                     data:{articleId:articleId,zanNum:zanNum,caiNum:caiNum,type:"zan"},
                     success:function(data){
-                            /*if(data.status == false){
-                                bootbox.alert({
-                                    message: data.msg,
-                                    size: 'small'
-                                });
-                            }*/
+                            new jBox('Notice', {
+                                animation: 'flip',
+                                color: getColor(),
+                                autoClose: Math.random() * 5000 + 2000,
+                                content: data.msg,
+                                delayOnHover: true,
+                                showCountdown: true,
+                                closeButton: true
+                            });
                     }
                 });
             }
@@ -372,12 +394,54 @@
                 dataType:"json",
                 data:{articleId:articleId,zanNum:zanNum,caiNum:caiNum,type:"cai"},
                 success:function(data){
-                    if(data.status == false){
-                        bootbox.alert({
+                        new jBox('Notice', {
+                            animation: 'flip',
+                            color: getColor(),
+                            autoClose: Math.random() * 5000 + 2000,
+                            content: data.msg,
+                            delayOnHover: true,
+                            showCountdown: true,
+                            closeButton: true
+                        });
+                }
+            });
+        }
+    }
+    //举报
+    function toReport(articleId){
+        var userId = $("#userId_hidden_id").val();
+        if(!checkIsNotBlank(userId)){
+            //未登录，不允许举报
+            //$("#noLoginWarning_id").show();
+            new jBox('Notice', {
+                animation: 'flip',
+                color: getColor(),
+                autoClose: Math.random() * 5000 + 2000,
+                content: '请登陆后再进行该操作！',
+                delayOnHover: true,
+                showCountdown: true,
+                closeButton: true
+            });
+        }else{
+            $.ajax({
+                url:"/index/toReportArticle.html",
+                type:"POST",
+                dataType:"json",
+                data:{articleId:articleId,userId:userId},
+                success:function(data){
+                        new jBox('Notice', {
+                            animation: 'flip',
+                            color: getColor(),
+                            autoClose: Math.random() * 5000 + 2000,
+                            content: data.msg,
+                            delayOnHover: true,
+                            showCountdown: true,
+                            closeButton: true
+                        });
+                       /* bootbox.alert({
                             message: data.msg,
                             size: 'small'
-                        });
-                    }
+                        });*/
                 }
             });
         }

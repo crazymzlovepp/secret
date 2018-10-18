@@ -29,4 +29,8 @@ public interface IndexService {
     List<ArticleVo> selectArticleVoListByParam(Map<String, Object> paramMap);
     //更新文章的点赞量、踩量、浏览量
     void updateReleaseArticle(ArticleVo articleVo);
+    //根据文章id查询文章举报人数
+    int selectReportNum(String articleId);
+    //拉黑或者更新文章举报人数
+    void reportOrUpdateArticle(ArticleVo articleVo);
 }

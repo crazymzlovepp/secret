@@ -82,4 +82,14 @@ public class IndexServiceImpl implements IndexService {
     public void updateReleaseArticle(ArticleVo articleVo) {
         articleVoMapper.updateReleaseArticle(articleVo);
     }
+    //根据文章id查询文章举报人数
+    @Override
+    public int selectReportNum(String articleId) {
+        return articleVoMapper.selectReportNum(articleId);
+    }
+    //拉黑或者更新文章举报人数
+    @Override
+    public void reportOrUpdateArticle(ArticleVo articleVo) {
+        articleVoMapper.reportOrUpdateArticle(articleVo);
+    }
 }

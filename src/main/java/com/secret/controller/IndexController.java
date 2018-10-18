@@ -31,6 +31,8 @@ import java.util.*;
 @Controller
 @RequestMapping("/index")
 public class IndexController {
+    //举报文章人数警告值
+    private static final int REPORT_WARN_NUM = 20;
     @Autowired
     IndexService indexService;
 	/**
@@ -386,8 +388,17 @@ public class IndexController {
                 articleVo.setBrowse(browse);
                 indexService.updateReleaseArticle(articleVo);
             }
+            if(!StringUtils.isEmpty(type)){
+                if(type.equals("zan")){
+                    jsonData.setStatus(true);
+                    jsonData.setMsg("这么用力，给你32个赞！");
+                }else{
+                    jsonData.setStatus(true);
+                    jsonData.setMsg("大地都被你踩的震动了！");
+                }
+            }
         } catch (Exception e) {
-            if(StringUtils.isEmpty(type)){
+            if(!StringUtils.isEmpty(type)){
                 if(type.equals("zan")){
                     jsonData.setMsg("用力太小，点赞失败咯，补充点能量再来一次吧！");
                 }else{
@@ -396,6 +407,39 @@ public class IndexController {
             }else{
                 jsonData.setMsg("数据被外星人劫持了，稍后再来吧！");
             }
+            e.printStackTrace();
+        }
+        return jsonData;
+    }
+    /**
+     * @author      mym
+     * @date        2018/10/18 0018 16:48
+     * @describe    举报文章
+     * @version     V1.0
+     * @param       [articleId, userId]
+     * @return      com.secret.common.utils.JsonData
+    */
+    @RequestMapping("/toReportArticle")
+    @ResponseBody
+    public JsonData toReportArticle(String articleId,String userId){
+        JsonData jsonData = new JsonData();
+        ArticleVo articleVo = new ArticleVo();
+        try {
+            articleVo.setArticleId(articleId);
+            articleVo.setUserId(userId);
+            int reportNum = indexService.selectReportNum(articleId);//根据文章id查询文章举报人数
+            if(REPORT_WARN_NUM <= reportNum){//超过警告值，将当前文章拉黑处理
+                articleVo.setReportNum(reportNum + 1);
+                articleVo.setReportTag("Y");
+            }else{
+                articleVo.setReportNum(reportNum + 1);
+                articleVo.setReportTag("N");//本身就是N 但是因为调用同一更新接口，所以这里也赋一下值
+            }
+            indexService.reportOrUpdateArticle(articleVo);
+            jsonData.setStatus(true);
+            jsonData.setMsg("已收到您的举报，稍后我们会处理！");
+        } catch (Exception e) {
+            jsonData.setMsg("坏人把网抢走了，稍后再试吧！");
             e.printStackTrace();
         }
         return jsonData;
