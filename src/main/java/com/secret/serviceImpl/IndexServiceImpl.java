@@ -106,4 +106,19 @@ public class IndexServiceImpl implements IndexService {
     public void insertReportVo(ReportVo newReportVo) {
         reportVoMapper.insert(newReportVo);
     }
+
+    @Override
+    public ArticleVo selectArticleVoByUserIdAndArticleId(String articleId, String userId) {
+        return articleVoMapper.selectByPrimaryKey(articleId,userId);
+    }
+    //更新秘密主体
+    @Override
+    public void updateArticleVo(ArticleVo articleVo) {
+        articleVoMapper.updateArticleVo(articleVo);
+    }
+    //删除秘密 逻辑删除
+    @Override
+    public void deleteReleaseArticlePage(String articleId) {
+        articleVoMapper.deleteReleaseArticlePage(articleId);
+    }
 }

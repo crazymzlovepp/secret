@@ -3,8 +3,6 @@ package com.secret.mapper;
 import com.secret.pojo.ArticleVo;
 import java.util.List;
 import java.util.Map;
-
-import com.secret.pojo.ReportVo;
 import org.apache.ibatis.annotations.Param;
 
 public interface ArticleVoMapper {
@@ -25,4 +23,8 @@ public interface ArticleVoMapper {
     int selectReportNum(String articleId);
     //拉黑或者更新文章举报人数
     void reportOrUpdateArticle(ArticleVo articleVo);
+    //更新秘密主体信息
+    void updateArticleVo(ArticleVo articleVo);
+    //删除秘密 逻辑删除
+    void deleteReleaseArticlePage(@Param("articleId") String articleId);
 }

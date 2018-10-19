@@ -85,7 +85,7 @@
         </div>
         <form class="navbar-form navbar-left" role="search">
             <div class="form-group">
-                <input type="text" id="search_id" class="form-control" placeholder="作者/标题/文章关键字">
+                <input type="text" id="search_id" class="form-control" placeholder="作者/标题/秘密关键字">
             </div>
             <a href="#" onclick="searchArticleByParam()" class="button button-primary button-pill button-tiny">Go</a>
         </form>
@@ -157,7 +157,7 @@
 <p style="margin-top:20px;text-align: center;">Copyright 2018 - 2019 Secret. All Rights Reserved</p>
 </footer>
     <!--隐藏域-->
-    <!--隐藏登录状态  查看我的及发布文章时有用-->
+    <!--隐藏登录状态  查看我的及发布秘密时有用-->
     <input type="hidden" id="loginType_hidden" value="${loginType!''}">
     <!--隐藏当前查询数据的类型(id)-->
     <input type="hidden" id="active_id" value="24_hours_id">
@@ -205,8 +205,8 @@
                                 zan = checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0;
                                 cai = checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0;
                                 html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
-                                    +"<button>修改</button>&nbsp;&nbsp;"
-                                    +"<button>删除</button>"
+                                    +"<button onclick=\"toEditArticle('"+articleArr[i].articleId+"')\">修改</button>&nbsp;&nbsp;"
+                                    +"<button onclick=\"toDelArticle('"+articleArr[i].articleId+"')\">删除</button>&nbsp;&nbsp;"
                                     +"</p><p>"+articleArr[i].articleTitle+"</p>"
                                     +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
                                     +"<p>"
@@ -445,6 +445,60 @@
                 }
             });
         }
+    }
+    //修改秘密
+    function toEditArticle(articleId){
+        //校验是否登陆
+        if($("#loginType_hidden").val() == null || $("#loginType_hidden").val() == ""){
+            new jBox('Notice', {
+                animation: 'flip',
+                color: getColor(),
+                autoClose: Math.random() * 5000 + 2000,
+                content: '请登陆后再进行该操作！',
+                delayOnHover: true,
+                showCountdown: true,
+                closeButton: true
+            });
+        }else{
+            window.location.href = "/index/toEditReleaseArticlePage.html?articleId="+articleId;
+        }
+    }
+    //删除秘密
+    function toDelArticle(articleId){
+        bootbox.confirm({
+            message: "确定要删除该秘密吗?",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if(result == true){
+                    $.ajax({
+                        type: "POST",
+                        url: "/index/deleteReleaseArticlePage.html",
+                        data: {articleId:articleId},
+                        dataType: "json",
+                        success:function(data){
+                            new jBox('Notice', {
+                                animation: 'flip',
+                                color: getColor(),
+                                autoClose: Math.random() * 5000 + 2000,
+                                content: data.msg,
+                                delayOnHover: true,
+                                showCountdown: true,
+                                closeButton: true
+                            });
+                        }
+                    })
+                }
+            }
+        });
     }
 </script>
 </html>

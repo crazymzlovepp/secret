@@ -41,7 +41,7 @@
     select article_id, report_user_id, report_id, report_type, report_content, report_date
     from report
   </select>
-    <!--查询当前文章是否被当前用户举报过，没个账号只能举报一次-->
+    <!--查询当前秘密是否被当前用户举报过，没个账号只能举报一次-->
     <select id="setlectReportVoByUserIdAndArticleId" resultMap="BaseResultMap" parameterType="com.secret.pojo.ArticleVo" >
     select article_id, report_user_id, report_id, report_type, report_content, report_date
     from report

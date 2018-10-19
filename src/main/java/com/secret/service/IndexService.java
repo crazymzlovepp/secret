@@ -38,4 +38,10 @@ public interface IndexService {
     ReportVo setlectReportVoByUserIdAndArticleId(ArticleVo articleVo);
     //新增举报信息
     void insertReportVo(ReportVo newReportVo);
+    //根据当前用户及秘密id查询秘密详情数据
+    ArticleVo selectArticleVoByUserIdAndArticleId(String articleId, String userId);
+    //更新秘密主体
+    void updateArticleVo(ArticleVo articleVo);
+    //删除秘密 逻辑删除
+    void deleteReleaseArticlePage(String articleId);
 }

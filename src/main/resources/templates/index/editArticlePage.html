@@ -84,13 +84,19 @@
     </div>-->
     <!--主内容区域-->
     <div id="main_id">
-        <form id="addReleaseArticle_form" autocomplete="off">
-        秘密名称<input type="text" name="articleTitle" id="articleTitle_id">
+        <form id="editReleaseArticle_form" autocomplete="off">
+        秘密名称<input type="text" name="articleTitle" id="articleTitle_id" value="${articleVo.articleTitle!''}">
             类型<select name="articleType" id="articleType_id">
-                <option value="1">公开</option>
+                <#if articleVo.articleType ?exists && articleVo.articleType == '1'>
+                <option value="1" selected="selected">公开</option>
                 <option value="2">私密</option>
+                <#else>
+                <option value="1">公开</option>
+                <option value="2" selected="selected">私密</option>
+                </#if>
                 </select>
-            内容<textarea name="content" id="content_id_add" style="margin: 0px; width: 767px; height: 468px;"></textarea>
+            内容<textarea name="content" id="content_id_edit" style="margin: 0px; width: 767px; height: 468px;">${articleVo.content!''}</textarea>
+            <input type="hidden" id="articleId_id" name="articleId" value="${articleVo.articleId!''}">
         </form>
     </div>
     <!--右侧部分-->
@@ -102,7 +108,7 @@
             <p>人成各，今非昨，病浑常似秋千索。角声寒，夜阑珊，怕人寻问，咽泪装欢。瞒、瞒、瞒。</p>
         </div>
         <div style="margin-left:25%;margin-top:35%;">
-            <a href="#" onclick="addReleaseArticle()" class="button button-3d button-primary button-pill button-small">保存秘密</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="#" onclick="editReleaseArticle()" class="button button-3d button-primary button-pill button-small">修改秘密</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <a href="#" onclick="goHeader()" class="button button-3d button-primary button-pill button-small">返回首页</a>
         </div>
     </div>
@@ -156,8 +162,8 @@
         window.location.href = "/index/index.html";
     }
     //保存秘密
-    function addReleaseArticle(){
-        var vo = $('#addReleaseArticle_form').serializeJSON();
+    function editReleaseArticle(){
+        var vo = $('#editReleaseArticle_form').serializeJSON();
         $.ajax({
             url:"/index/addOrUpdateReleaseArticle.html",
             dataType:"json",
@@ -177,7 +183,7 @@
                     //清空输入框
                     $("#articleTitle_id").val("");
                     $("#articleType_id").val("");
-                    $("#content_id_add").val("");
+                    $("#content_id_edit").val("");
                 }else{
                         new jBox('Notice', {
                             animation: 'flip',
