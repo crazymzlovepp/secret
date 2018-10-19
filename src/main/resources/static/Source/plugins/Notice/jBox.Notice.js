@@ -25,7 +25,7 @@ jQuery(document).ready(function () {
     },
     position: {       // Defines the distance to the viewport boundary
       x: 15,
-      y: 15
+      y: 50
     },
     responsivePositions: {  // Responsive positions
       500: {                // The key defines the maximum width of the viewport, the values will replace the default position options
