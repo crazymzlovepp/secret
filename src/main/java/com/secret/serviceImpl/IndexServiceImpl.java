@@ -2,8 +2,10 @@ package com.secret.serviceImpl;
 
 import com.secret.common.utils.UUIDUtils;
 import com.secret.mapper.ArticleVoMapper;
+import com.secret.mapper.ReportVoMapper;
 import com.secret.mapper.UserVoMapper;
 import com.secret.pojo.ArticleVo;
+import com.secret.pojo.ReportVo;
 import com.secret.pojo.UserVo;
 import com.secret.service.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class IndexServiceImpl implements IndexService {
     UserVoMapper userVoMapper;
     @Autowired
     ArticleVoMapper articleVoMapper;
+    @Autowired
+    ReportVoMapper reportVoMapper;
     //根据用户名查询用户是否存在
     @Override
     public UserVo selectUserByUserName(String userName) {
@@ -91,5 +95,15 @@ public class IndexServiceImpl implements IndexService {
     @Override
     public void reportOrUpdateArticle(ArticleVo articleVo) {
         articleVoMapper.reportOrUpdateArticle(articleVo);
+    }
+    //查询当前文章是否被当前用户举报过，没个账号只能举报一次
+    @Override
+    public ReportVo setlectReportVoByUserIdAndArticleId(ArticleVo articleVo) {
+        return reportVoMapper.setlectReportVoByUserIdAndArticleId(articleVo);
+    }
+    //新增举报信息
+    @Override
+    public void insertReportVo(ReportVo newReportVo) {
+        reportVoMapper.insert(newReportVo);
     }
 }

@@ -4,6 +4,7 @@ import com.secret.pojo.ArticleVo;
 import java.util.List;
 import java.util.Map;
 
+import com.secret.pojo.ReportVo;
 import org.apache.ibatis.annotations.Param;
 
 public interface ArticleVoMapper {

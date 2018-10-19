@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.secret.mapper.ReportVoMapper" >
+  <resultMap id="BaseResultMap" type="com.secret.pojo.ReportVo" >
+    <id column="article_id" property="articleId" jdbcType="VARCHAR" />
+    <id column="report_user_id" property="reportUserId" jdbcType="VARCHAR" />
+    <result column="report_id" property="reportId" jdbcType="VARCHAR" />
+    <result column="report_type" property="reportType" jdbcType="VARCHAR" />
+    <result column="report_content" property="reportContent" jdbcType="VARCHAR" />
+    <result column="report_date" property="reportDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from report
+    where article_id = #{articleId,jdbcType=VARCHAR}
+      and report_user_id = #{reportUserId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.secret.pojo.ReportVo" >
+    insert into report (article_id, report_user_id, report_id, 
+      report_type, report_content, report_date
+      )
+    values (#{articleId,jdbcType=VARCHAR}, #{reportUserId,jdbcType=VARCHAR}, #{reportId,jdbcType=VARCHAR}, 
+      #{reportType,jdbcType=VARCHAR}, #{reportContent,jdbcType=VARCHAR}, #{reportDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.secret.pojo.ReportVo" >
+    update report
+    set report_id = #{reportId,jdbcType=VARCHAR},
+      report_type = #{reportType,jdbcType=VARCHAR},
+      report_content = #{reportContent,jdbcType=VARCHAR},
+      report_date = #{reportDate,jdbcType=TIMESTAMP}
+    where article_id = #{articleId,jdbcType=VARCHAR}
+      and report_user_id = #{reportUserId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select article_id, report_user_id, report_id, report_type, report_content, report_date
+    from report
+    where article_id = #{articleId,jdbcType=VARCHAR}
+      and report_user_id = #{reportUserId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select article_id, report_user_id, report_id, report_type, report_content, report_date
+    from report
+  </select>
+    <!--查询当前文章是否被当前用户举报过，没个账号只能举报一次-->
+    <select id="setlectReportVoByUserIdAndArticleId" resultMap="BaseResultMap" parameterType="com.secret.pojo.ArticleVo" >
+    select article_id, report_user_id, report_id, report_type, report_content, report_date
+    from report
+    where article_id = #{articleId,jdbcType=VARCHAR}
+      and report_user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+</mapper>

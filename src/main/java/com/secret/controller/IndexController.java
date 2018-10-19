@@ -6,6 +6,7 @@ import com.secret.common.utils.IpInfoUtils;
 import com.secret.common.utils.JsonData;
 import com.secret.common.utils.UUIDUtils;
 import com.secret.pojo.ArticleVo;
+import com.secret.pojo.ReportVo;
 import com.secret.pojo.UserVo;
 import com.secret.service.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -427,17 +428,33 @@ public class IndexController {
         try {
             articleVo.setArticleId(articleId);
             articleVo.setUserId(userId);
-            int reportNum = indexService.selectReportNum(articleId);//根据文章id查询文章举报人数
-            if(REPORT_WARN_NUM <= reportNum){//超过警告值，将当前文章拉黑处理
-                articleVo.setReportNum(reportNum + 1);
-                articleVo.setReportTag("Y");
+            //查询当前文章是否被当前用户举报过，没个账号只能举报一次
+            ReportVo reportVo = indexService.setlectReportVoByUserIdAndArticleId(articleVo);
+            if(reportVo == null){//第一次举报
+                //先将举报信息存入举报表中
+                ReportVo newReportVo = new ReportVo();
+                newReportVo.setReportId(UUIDUtils.getUUID());
+                newReportVo.setArticleId(articleId);
+                newReportVo.setReportUserId(userId);
+                newReportVo.setReportDate(new Date());
+                indexService.insertReportVo(newReportVo);
+
+                //根据文章id查询文章举报人数
+                int reportNum = indexService.selectReportNum(articleId);
+                if(REPORT_WARN_NUM <= reportNum){//超过警告值，将当前文章拉黑处理
+                    articleVo.setReportNum(reportNum + 1);
+                    articleVo.setReportTag("Y");
+                }else{
+                    articleVo.setReportNum(reportNum + 1);
+                    articleVo.setReportTag("N");//本身就是N 但是因为调用同一更新接口，所以这里也赋一下值
+                }
+                indexService.reportOrUpdateArticle(articleVo);
+                jsonData.setStatus(true);
+                jsonData.setMsg("已收到您的举报，稍后我们会处理！");
             }else{
-                articleVo.setReportNum(reportNum + 1);
-                articleVo.setReportTag("N");//本身就是N 但是因为调用同一更新接口，所以这里也赋一下值
+                jsonData.setStatus(true);
+                jsonData.setMsg("您已经举报过了，消消气，我们会尽快处理！");
             }
-            indexService.reportOrUpdateArticle(articleVo);
-            jsonData.setStatus(true);
-            jsonData.setMsg("已收到您的举报，稍后我们会处理！");
         } catch (Exception e) {
             jsonData.setMsg("坏人把网抢走了，稍后再试吧！");
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.secret.service;
 
 import com.secret.pojo.ArticleVo;
+import com.secret.pojo.ReportVo;
 import com.secret.pojo.UserVo;
 
 import java.util.List;
@@ -33,4 +34,8 @@ public interface IndexService {
     int selectReportNum(String articleId);
     //拉黑或者更新文章举报人数
     void reportOrUpdateArticle(ArticleVo articleVo);
+    //查询当前文章是否被当前用户举报过，没个账号只能举报一次
+    ReportVo setlectReportVoByUserIdAndArticleId(ArticleVo articleVo);
+    //新增举报信息
+    void insertReportVo(ReportVo newReportVo);
 }
