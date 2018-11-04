@@ -8,7 +8,9 @@ import com.secret.common.utils.UUIDUtils;
 import com.secret.pojo.ArticleVo;
 import com.secret.pojo.ReportVo;
 import com.secret.pojo.UserVo;
+import com.secret.pojo.VisitUserInfoVo;
 import com.secret.service.IndexService;
+import com.secret.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -36,6 +38,8 @@ public class IndexController {
     private static final int REPORT_WARN_NUM = 20;
     @Autowired
     IndexService indexService;
+    @Autowired
+    LoginService loginService;
 	/**
 	 * 
 	 * @author 		mym
@@ -73,6 +77,21 @@ public class IndexController {
             List<ArticleVo> articleVoList = indexService.selectArticleVoListByParam(paramMap);
             model.addObject("articleVoList",articleVoList);
 			model.setViewName("index/index");
+			//记录当前访客ip信息 每个访客每天只记录一次
+            //登录成功后将当前登录IP等信息存起来
+            //先根据当前年月日以及ip查询是否存在当日访问记录，不存在则执行新增
+            VisitUserInfoVo vo = new VisitUserInfoVo();
+            vo.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            vo.setIp(IpInfoUtils.getVisitIp(request));
+            vo.setIpAddress(IpInfoUtils.getIpAddress(vo.getIp()));
+            vo.setHostName(IpInfoUtils.getHostName(request));
+            vo.setSource("1");
+            vo.setUsername(StringUtils.isEmpty(userId) ? "访客" : userId);
+            vo.setVisitDate(new Date());
+            int num = loginService.selectVisitInfoByVo(vo);
+            if(num == 0){
+                loginService.insertVisitUserInfoVo(vo);
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

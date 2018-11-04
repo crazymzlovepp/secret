@@ -2,6 +2,7 @@ package com.secret.mapper;
 
 import com.secret.pojo.MenuQueryVo;
 import com.secret.pojo.MenuVo;
+import com.secret.pojo.VisitUserInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface MenuVoMapper {
     void deleteMenu(@Param("ids") String[] ids);
     //根据菜单id更新菜单数据
     void updateMenuVo(MenuVo menuVo);
+    //根据当前年月日以及ip查询是否存在当日访问记录
+    int selectVisitInfoByVo(VisitUserInfoVo vo);
 }

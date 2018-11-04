@@ -24,4 +24,6 @@ public interface LoginService {
     int selectTotalVisitOfToday();
 	//查找所有菜单数据集合
     List<MenuQueryVo> selectAllMenuList();
+    //根据当前年月日以及ip查询是否存在当日访问记录
+    int selectVisitInfoByVo(VisitUserInfoVo vo);
 }

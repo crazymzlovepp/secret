@@ -103,4 +103,10 @@
               </set>
               WHERE menu_id = #{menuId,jdbcType=VARCHAR}
             </update>
+    <!--根据当前年月日以及ip查询是否存在当日访问记录-->
+    <select id="selectVisitInfoByVo" parameterType="com.secret.pojo.VisitUserInfoVo" resultType="int">
+    select count(1) from visit_user_info vui where vui.ip = #{ip}
+    and vui.source = #{source}
+    and DATE_FORMAT(vui.visit_date,"%Y%m%d") = DATE_FORMAT(#{visitDate},"%Y%m%d")
+    </select>
 </mapper>

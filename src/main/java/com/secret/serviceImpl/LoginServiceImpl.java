@@ -65,4 +65,9 @@ public class LoginServiceImpl implements LoginService {
 		}
 		return returnMenuQueryVoList;
 	}
+    //根据当前年月日以及ip查询是否存在当日访问记录
+    @Override
+    public int selectVisitInfoByVo(VisitUserInfoVo vo) {
+        return menuVoMapper.selectVisitInfoByVo(vo);//先查父级菜单;
+    }
 }
