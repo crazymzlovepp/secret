@@ -308,18 +308,31 @@
                 type:"POST",
                 dataType:"json",
                 data:{type:"search_id",param:param},
-                success:function(data){
+                success:function(data) {
                     $("#main_id").empty();
                     var html = "";
-                    if(data.status == true && data.object != null){
+                    if (data.status == true && data.object != null) {
                         var articleArr = data.object;
-                        for (var i in articleArr){
-                            html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
-                                +"<button>举报</button>"
-                                +"</p><p>"+articleArr[i].articleTitle+"</p>"
-                                +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
-                                +"<p><button>赞</button><button>踩</button></p>"
-                                +"</div>";
+                        var browse = "";
+                        var zan = "";
+                        var cai = "";
+                        for (var i in articleArr) {
+                            browse = checkIsNotBlank(articleArr[i].browse) ? articleArr[i].browse : 0;
+                            zan = checkIsNotBlank(articleArr[i].zanNum) ? articleArr[i].zanNum : 0;
+                            cai = checkIsNotBlank(articleArr[i].caiNum) ? articleArr[i].caiNum : 0;
+                            html = html + "<p><b>" + articleArr[i].articleUsername + "</b>&nbsp;&nbsp;创建于：" + forMatterDate(articleArr[i].createDate, "yyyy-MM-dd HH:mm:ss")
+                                + "<button onclick=\"toReport('" + articleArr[i].articleId + "')\">举报</button>"
+                                + "</p><p>" + articleArr[i].articleTitle + "</p>"
+                                + "<textarea style='resize:none;width:95%;height:420px;'>" + articleArr[i].content + "</textarea>"
+                                + "<p>"
+                                + "总浏览量：<span id='" + articleArr[i].articleId + "_browse'>" + browse + "</span><span>+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                + "<button onclick=\"zan('" + articleArr[i].articleId + "')\">赞:&nbsp;</button>"
+                                + "<span id='" + articleArr[i].articleId + "_zan'>" + zan + "</span>"
+                                + "&nbsp;&nbsp;"
+                                + "<button onclick=\"cai('" + articleArr[i].articleId + "')\">踩:&nbsp;</button>"
+                                + "<span id='" + articleArr[i].articleId + "_cai'>" + cai + "</span>"
+                                + "</p>"
+                                + "</div>";
                         }
                         $("#main_id").prepend(html);
                     }
