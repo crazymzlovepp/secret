@@ -76,7 +76,7 @@
     select article_id, user_id, article_username, article_title,content,browse,zan_num,cai_num,
       create_date,content
     from article
-    where report_tag = "N" and delete_tag = "N"
+    where report_tag = "N" and delete_tag = "N" and article_type = '1'
     <!-- 用户id -->
     <if test="userId != null and userId !=''">
         and user_id = #{userId}

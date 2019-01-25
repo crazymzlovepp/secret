@@ -205,7 +205,12 @@
                                 zan = checkIsNotBlank(articleArr[i].zanNum)?articleArr[i].zanNum:0;
                                 cai = checkIsNotBlank(articleArr[i].caiNum)?articleArr[i].caiNum:0;
                                 html = html+"<p><b>"+articleArr[i].articleUsername+"</b>&nbsp;&nbsp;创建于："+forMatterDate(articleArr[i].createDate,"yyyy-MM-dd HH:mm:ss")
-                                    +"<button onclick=\"toEditArticle('"+articleArr[i].articleId+"')\">修改</button>&nbsp;&nbsp;"
+                                    if(articleArr[i].articleType == 1 || articleArr[i].articleType == "1"){
+                                        html += "&nbsp;公开&nbsp;&nbsp;";
+                                    }else{
+                                        html += "&nbsp;私密&nbsp;&nbsp;";
+                                    }
+                                html = html+"<button onclick=\"toEditArticle('"+articleArr[i].articleId+"')\">修改</button>&nbsp;&nbsp;"
                                     +"<button onclick=\"toDelArticle('"+articleArr[i].articleId+"')\">删除</button>&nbsp;&nbsp;"
                                     +"</p><p>"+articleArr[i].articleTitle+"</p>"
                                     +"<textarea style='resize:none;width:95%;height:420px;'>"+articleArr[i].content+"</textarea>"
